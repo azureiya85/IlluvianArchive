@@ -1,0 +1,2295 @@
+[
+  {
+    "id": "schema.public",
+    "label": "Create schema \"public\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres"
+    },
+    "precheck": [],
+    "execute": [
+      {
+        "description": "Create schema \"public\"",
+        "sql": "CREATE SCHEMA IF NOT EXISTS \"public\"",
+        "params": []
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "table.Arc",
+    "label": "Create table \"Arc\"",
+    "summary": "Creates table \"Arc\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Arc"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Arc\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Arc\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Arc\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Arc\"",
+        "sql": "CREATE TABLE \"public\".\"Arc\" (\n  \"bookId\" text NOT NULL,\n  \"coverImage\" text,\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"orderIndex\" float8 NOT NULL,\n  \"slug\" text NOT NULL,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Arc\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Arc\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Arc\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Book",
+    "label": "Create table \"Book\"",
+    "summary": "Creates table \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Book\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Book\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Book\"",
+        "sql": "CREATE TABLE \"public\".\"Book\" (\n  \"author\" text DEFAULT 'Yosef Ryan' NOT NULL,\n  \"coverImage\" text,\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"description\" text NOT NULL,\n  \"eraId\" text,\n  \"id\" text NOT NULL,\n  \"slug\" text NOT NULL,\n  \"status\" text DEFAULT 'DRAFT' NOT NULL,\n  \"title\" text NOT NULL,\n  \"type\" text DEFAULT 'NOVEL' NOT NULL,\n  \"universeId\" text,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  \"wordCount\" int4 DEFAULT 0 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Book_status_check_bc64f66b\" CHECK (\"status\" IN ('DRAFT', 'PUBLISHED', 'ARCHIVED')),\n  CONSTRAINT \"Book_type_check_5a6afa18\" CHECK (\"type\" IN ('SHORT_FICTION', 'NOVELLA', 'NOVEL', 'WEB_SERIAL'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Book\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Book\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Book\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.BookCharacter",
+    "label": "Create table \"BookCharacter\"",
+    "summary": "Creates table \"BookCharacter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "BookCharacter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"BookCharacter\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"BookCharacter\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"BookCharacter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"BookCharacter\"",
+        "sql": "CREATE TABLE \"public\".\"BookCharacter\" (\n  \"bookId\" text NOT NULL,\n  \"characterId\" text NOT NULL,\n  PRIMARY KEY (\"bookId\", \"characterId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"BookCharacter\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"BookCharacter\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"BookCharacter\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.BookTag",
+    "label": "Create table \"BookTag\"",
+    "summary": "Creates table \"BookTag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "BookTag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"BookTag\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"BookTag\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"BookTag\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"BookTag\"",
+        "sql": "CREATE TABLE \"public\".\"BookTag\" (\n  \"bookId\" text NOT NULL,\n  \"tagId\" text NOT NULL,\n  PRIMARY KEY (\"bookId\", \"tagId\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"BookTag\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"BookTag\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"BookTag\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Chapter",
+    "label": "Create table \"Chapter\"",
+    "summary": "Creates table \"Chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Chapter\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Chapter\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Chapter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Chapter\"",
+        "sql": "CREATE TABLE \"public\".\"Chapter\" (\n  \"arcId\" text,\n  \"bookId\" text NOT NULL,\n  \"content\" text NOT NULL,\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"orderIndex\" float8 NOT NULL,\n  \"slug\" text NOT NULL,\n  \"status\" text DEFAULT 'DRAFT' NOT NULL,\n  \"summary\" text,\n  \"title\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  \"wordCount\" int4 DEFAULT 0 NOT NULL,\n  PRIMARY KEY (\"id\"),\n  CONSTRAINT \"Chapter_status_check_bc64f66b\" CHECK (\"status\" IN ('DRAFT', 'PUBLISHED', 'ARCHIVED'))\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Chapter\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Chapter\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Chapter\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Character",
+    "label": "Create table \"Character\"",
+    "summary": "Creates table \"Character\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Character"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Character\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Character\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Character\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Character\"",
+        "sql": "CREATE TABLE \"public\".\"Character\" (\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"image\" text,\n  \"name\" text NOT NULL,\n  \"universeId\" text,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Character\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Character\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Character\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Era",
+    "label": "Create table \"Era\"",
+    "summary": "Creates table \"Era\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Era"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Era\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Era\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Era\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Era\"",
+        "sql": "CREATE TABLE \"public\".\"Era\" (\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"slug\" text NOT NULL,\n  \"universeId\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Era\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Era\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Era\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Tag",
+    "label": "Create table \"Tag\"",
+    "summary": "Creates table \"Tag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Tag\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Tag\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Tag\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Tag\"",
+        "sql": "CREATE TABLE \"public\".\"Tag\" (\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"slug\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Tag\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Tag\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Tag\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.Universe",
+    "label": "Create table \"Universe\"",
+    "summary": "Creates table \"Universe\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "Universe"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"Universe\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Universe\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"Universe\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"Universe\"",
+        "sql": "CREATE TABLE \"public\".\"Universe\" (\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"description\" text,\n  \"id\" text NOT NULL,\n  \"name\" text NOT NULL,\n  \"slug\" text NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"Universe\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"Universe\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"Universe\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "unique.Arc.Arc_bookId_slug_key",
+    "label": "Add unique constraint on \"Arc\" (bookId, slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Arc_bookId_slug_key",
+        "table": "Arc"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Arc_bookId_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Arc_bookId_slug_key",
+          "public",
+          "\"public\".\"Arc\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Arc_bookId_slug_key\" on \"Arc\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Arc_bookId_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"Arc\" ADD CONSTRAINT \"Arc_bookId_slug_key\" UNIQUE (\"bookId\", \"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Arc_bookId_slug_key\" exists on (bookId, slug)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Arc_bookId_slug_key",
+          "public",
+          "\"public\".\"Arc\"",
+          "u",
+          "[\"bookId\",\"slug\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Book.Book_slug_key",
+    "label": "Add unique constraint on \"Book\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Book_slug_key",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Book_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Book_slug_key",
+          "public",
+          "\"public\".\"Book\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Book_slug_key\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Book_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ADD CONSTRAINT \"Book_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Book_slug_key\" exists on (slug)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Book_slug_key",
+          "public",
+          "\"public\".\"Book\"",
+          "u",
+          "[\"slug\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Chapter.Chapter_bookId_slug_key",
+    "label": "Add unique constraint on \"Chapter\" (bookId, slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Chapter_bookId_slug_key",
+        "table": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Chapter_bookId_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Chapter_bookId_slug_key",
+          "public",
+          "\"public\".\"Chapter\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Chapter_bookId_slug_key\" on \"Chapter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Chapter_bookId_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"Chapter\" ADD CONSTRAINT \"Chapter_bookId_slug_key\" UNIQUE (\"bookId\", \"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Chapter_bookId_slug_key\" exists on (bookId, slug)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Chapter_bookId_slug_key",
+          "public",
+          "\"public\".\"Chapter\"",
+          "u",
+          "[\"bookId\",\"slug\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Era.Era_universeId_slug_key",
+    "label": "Add unique constraint on \"Era\" (universeId, slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Era_universeId_slug_key",
+        "table": "Era"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Era_universeId_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Era_universeId_slug_key",
+          "public",
+          "\"public\".\"Era\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Era_universeId_slug_key\" on \"Era\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Era_universeId_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"Era\" ADD CONSTRAINT \"Era_universeId_slug_key\" UNIQUE (\"universeId\", \"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Era_universeId_slug_key\" exists on (universeId, slug)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Era_universeId_slug_key",
+          "public",
+          "\"public\".\"Era\"",
+          "u",
+          "[\"universeId\",\"slug\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Tag.Tag_name_key",
+    "label": "Add unique constraint on \"Tag\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Tag_name_key",
+        "table": "Tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Tag_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Tag_name_key",
+          "public",
+          "\"public\".\"Tag\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Tag_name_key\" on \"Tag\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Tag_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"Tag\" ADD CONSTRAINT \"Tag_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Tag_name_key\" exists on (name)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Tag_name_key",
+          "public",
+          "\"public\".\"Tag\"",
+          "u",
+          "[\"name\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Tag.Tag_slug_key",
+    "label": "Add unique constraint on \"Tag\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Tag_slug_key",
+        "table": "Tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Tag_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Tag_slug_key",
+          "public",
+          "\"public\".\"Tag\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Tag_slug_key\" on \"Tag\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Tag_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"Tag\" ADD CONSTRAINT \"Tag_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Tag_slug_key\" exists on (slug)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Tag_slug_key",
+          "public",
+          "\"public\".\"Tag\"",
+          "u",
+          "[\"slug\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Universe.Universe_name_key",
+    "label": "Add unique constraint on \"Universe\" (name)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Universe_name_key",
+        "table": "Universe"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Universe_name_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Universe_name_key",
+          "public",
+          "\"public\".\"Universe\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Universe_name_key\" on \"Universe\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Universe_name_key\"",
+        "sql": "ALTER TABLE \"public\".\"Universe\" ADD CONSTRAINT \"Universe_name_key\" UNIQUE (\"name\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Universe_name_key\" exists on (name)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Universe_name_key",
+          "public",
+          "\"public\".\"Universe\"",
+          "u",
+          "[\"name\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "unique.Universe.Universe_slug_key",
+    "label": "Add unique constraint on \"Universe\" (slug)",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "unique",
+        "name": "Universe_slug_key",
+        "table": "Universe"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Universe_slug_key\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Universe_slug_key",
+          "public",
+          "\"public\".\"Universe\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Universe_slug_key\" on \"Universe\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add unique constraint \"Universe_slug_key\"",
+        "sql": "ALTER TABLE \"public\".\"Universe\" ADD CONSTRAINT \"Universe_slug_key\" UNIQUE (\"slug\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify unique constraint \"Universe_slug_key\" exists on (slug)",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb)) AS \"result\"",
+        "params": [
+          "Universe_slug_key",
+          "public",
+          "\"public\".\"Universe\"",
+          "u",
+          "[\"slug\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Arc.Arc_bookId_idx_3eec38a3",
+    "label": "Create index \"Arc_bookId_idx_3eec38a3\" on \"Arc\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Arc_bookId_idx_3eec38a3",
+        "table": "Arc"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Arc_bookId_idx_3eec38a3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Arc_bookId_idx_3eec38a3\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Arc_bookId_idx_3eec38a3\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Arc_bookId_idx_3eec38a3\"",
+        "sql": "CREATE INDEX \"Arc_bookId_idx_3eec38a3\" ON \"public\".\"Arc\" (\"bookId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Arc_bookId_idx_3eec38a3\" exists on \"Arc\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Arc_bookId_idx_3eec38a3\"",
+          "i",
+          "I",
+          "\"public\".\"Arc\"",
+          "btree",
+          "[\"bookId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Book.Book_eraId_idx_04465c78",
+    "label": "Create index \"Book_eraId_idx_04465c78\" on \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Book_eraId_idx_04465c78",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Book_eraId_idx_04465c78\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Book_eraId_idx_04465c78\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Book_eraId_idx_04465c78\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Book_eraId_idx_04465c78\"",
+        "sql": "CREATE INDEX \"Book_eraId_idx_04465c78\" ON \"public\".\"Book\" (\"eraId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Book_eraId_idx_04465c78\" exists on \"Book\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Book_eraId_idx_04465c78\"",
+          "i",
+          "I",
+          "\"public\".\"Book\"",
+          "btree",
+          "[\"eraId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Book.Book_universeId_idx_57fb06de",
+    "label": "Create index \"Book_universeId_idx_57fb06de\" on \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Book_universeId_idx_57fb06de",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Book_universeId_idx_57fb06de\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Book_universeId_idx_57fb06de\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Book_universeId_idx_57fb06de\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Book_universeId_idx_57fb06de\"",
+        "sql": "CREATE INDEX \"Book_universeId_idx_57fb06de\" ON \"public\".\"Book\" (\"universeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Book_universeId_idx_57fb06de\" exists on \"Book\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Book_universeId_idx_57fb06de\"",
+          "i",
+          "I",
+          "\"public\".\"Book\"",
+          "btree",
+          "[\"universeId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.BookCharacter.BookCharacter_bookId_idx_3eec38a3",
+    "label": "Create index \"BookCharacter_bookId_idx_3eec38a3\" on \"BookCharacter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "BookCharacter_bookId_idx_3eec38a3",
+        "table": "BookCharacter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"BookCharacter_bookId_idx_3eec38a3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"BookCharacter_bookId_idx_3eec38a3\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"BookCharacter_bookId_idx_3eec38a3\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"BookCharacter_bookId_idx_3eec38a3\"",
+        "sql": "CREATE INDEX \"BookCharacter_bookId_idx_3eec38a3\" ON \"public\".\"BookCharacter\" (\"bookId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"BookCharacter_bookId_idx_3eec38a3\" exists on \"BookCharacter\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"BookCharacter_bookId_idx_3eec38a3\"",
+          "i",
+          "I",
+          "\"public\".\"BookCharacter\"",
+          "btree",
+          "[\"bookId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.BookCharacter.BookCharacter_characterId_idx_2423fe9d",
+    "label": "Create index \"BookCharacter_characterId_idx_2423fe9d\" on \"BookCharacter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "BookCharacter_characterId_idx_2423fe9d",
+        "table": "BookCharacter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"BookCharacter_characterId_idx_2423fe9d\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"BookCharacter_characterId_idx_2423fe9d\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"BookCharacter_characterId_idx_2423fe9d\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"BookCharacter_characterId_idx_2423fe9d\"",
+        "sql": "CREATE INDEX \"BookCharacter_characterId_idx_2423fe9d\" ON \"public\".\"BookCharacter\" (\"characterId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"BookCharacter_characterId_idx_2423fe9d\" exists on \"BookCharacter\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"BookCharacter_characterId_idx_2423fe9d\"",
+          "i",
+          "I",
+          "\"public\".\"BookCharacter\"",
+          "btree",
+          "[\"characterId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.BookTag.BookTag_bookId_idx_3eec38a3",
+    "label": "Create index \"BookTag_bookId_idx_3eec38a3\" on \"BookTag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "BookTag_bookId_idx_3eec38a3",
+        "table": "BookTag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"BookTag_bookId_idx_3eec38a3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"BookTag_bookId_idx_3eec38a3\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"BookTag_bookId_idx_3eec38a3\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"BookTag_bookId_idx_3eec38a3\"",
+        "sql": "CREATE INDEX \"BookTag_bookId_idx_3eec38a3\" ON \"public\".\"BookTag\" (\"bookId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"BookTag_bookId_idx_3eec38a3\" exists on \"BookTag\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"BookTag_bookId_idx_3eec38a3\"",
+          "i",
+          "I",
+          "\"public\".\"BookTag\"",
+          "btree",
+          "[\"bookId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.BookTag.BookTag_tagId_idx_86854244",
+    "label": "Create index \"BookTag_tagId_idx_86854244\" on \"BookTag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "BookTag_tagId_idx_86854244",
+        "table": "BookTag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"BookTag_tagId_idx_86854244\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"BookTag_tagId_idx_86854244\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"BookTag_tagId_idx_86854244\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"BookTag_tagId_idx_86854244\"",
+        "sql": "CREATE INDEX \"BookTag_tagId_idx_86854244\" ON \"public\".\"BookTag\" (\"tagId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"BookTag_tagId_idx_86854244\" exists on \"BookTag\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"BookTag_tagId_idx_86854244\"",
+          "i",
+          "I",
+          "\"public\".\"BookTag\"",
+          "btree",
+          "[\"tagId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Chapter.Chapter_arcId_idx_c2ffa62c",
+    "label": "Create index \"Chapter_arcId_idx_c2ffa62c\" on \"Chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Chapter_arcId_idx_c2ffa62c",
+        "table": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Chapter_arcId_idx_c2ffa62c\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Chapter_arcId_idx_c2ffa62c\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Chapter_arcId_idx_c2ffa62c\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Chapter_arcId_idx_c2ffa62c\"",
+        "sql": "CREATE INDEX \"Chapter_arcId_idx_c2ffa62c\" ON \"public\".\"Chapter\" (\"arcId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Chapter_arcId_idx_c2ffa62c\" exists on \"Chapter\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Chapter_arcId_idx_c2ffa62c\"",
+          "i",
+          "I",
+          "\"public\".\"Chapter\"",
+          "btree",
+          "[\"arcId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Chapter.Chapter_bookId_idx_3eec38a3",
+    "label": "Create index \"Chapter_bookId_idx_3eec38a3\" on \"Chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Chapter_bookId_idx_3eec38a3",
+        "table": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Chapter_bookId_idx_3eec38a3\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Chapter_bookId_idx_3eec38a3\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Chapter_bookId_idx_3eec38a3\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Chapter_bookId_idx_3eec38a3\"",
+        "sql": "CREATE INDEX \"Chapter_bookId_idx_3eec38a3\" ON \"public\".\"Chapter\" (\"bookId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Chapter_bookId_idx_3eec38a3\" exists on \"Chapter\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Chapter_bookId_idx_3eec38a3\"",
+          "i",
+          "I",
+          "\"public\".\"Chapter\"",
+          "btree",
+          "[\"bookId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Character.Character_universeId_idx_57fb06de",
+    "label": "Create index \"Character_universeId_idx_57fb06de\" on \"Character\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Character_universeId_idx_57fb06de",
+        "table": "Character"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Character_universeId_idx_57fb06de\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Character_universeId_idx_57fb06de\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Character_universeId_idx_57fb06de\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Character_universeId_idx_57fb06de\"",
+        "sql": "CREATE INDEX \"Character_universeId_idx_57fb06de\" ON \"public\".\"Character\" (\"universeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Character_universeId_idx_57fb06de\" exists on \"Character\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Character_universeId_idx_57fb06de\"",
+          "i",
+          "I",
+          "\"public\".\"Character\"",
+          "btree",
+          "[\"universeId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "index.Era.Era_universeId_idx_57fb06de",
+    "label": "Create index \"Era_universeId_idx_57fb06de\" on \"Era\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "Era_universeId_idx_57fb06de",
+        "table": "Era"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"Era_universeId_idx_57fb06de\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"Era_universeId_idx_57fb06de\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"Era_universeId_idx_57fb06de\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"Era_universeId_idx_57fb06de\"",
+        "sql": "CREATE INDEX \"Era_universeId_idx_57fb06de\" ON \"public\".\"Era\" (\"universeId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"Era_universeId_idx_57fb06de\" exists on \"Era\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"Era_universeId_idx_57fb06de\"",
+          "i",
+          "I",
+          "\"public\".\"Era\"",
+          "btree",
+          "[\"universeId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Arc.Arc_bookId_fkey",
+    "label": "Add foreign key \"Arc_bookId_fkey\" on \"Arc\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Arc_bookId_fkey",
+        "table": "Arc"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Arc_bookId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Arc_bookId_fkey",
+          "public",
+          "\"public\".\"Arc\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Arc_bookId_fkey\" on \"Arc\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Arc_bookId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Arc\"\nADD CONSTRAINT \"Arc_bookId_fkey\"\nFOREIGN KEY (\"bookId\")\nREFERENCES \"public\".\"Book\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Arc_bookId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Arc_bookId_fkey",
+          "public",
+          "\"public\".\"Arc\"",
+          "f",
+          "[\"bookId\"]",
+          "\"public\".\"Book\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Book.Book_universeId_fkey",
+    "label": "Add foreign key \"Book_universeId_fkey\" on \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Book_universeId_fkey",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Book_universeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Book_universeId_fkey",
+          "public",
+          "\"public\".\"Book\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Book_universeId_fkey\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Book_universeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Book\"\nADD CONSTRAINT \"Book_universeId_fkey\"\nFOREIGN KEY (\"universeId\")\nREFERENCES \"public\".\"Universe\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Book_universeId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Book_universeId_fkey",
+          "public",
+          "\"public\".\"Book\"",
+          "f",
+          "[\"universeId\"]",
+          "\"public\".\"Universe\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Book.Book_eraId_fkey",
+    "label": "Add foreign key \"Book_eraId_fkey\" on \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Book_eraId_fkey",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Book_eraId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Book_eraId_fkey",
+          "public",
+          "\"public\".\"Book\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Book_eraId_fkey\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Book_eraId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Book\"\nADD CONSTRAINT \"Book_eraId_fkey\"\nFOREIGN KEY (\"eraId\")\nREFERENCES \"public\".\"Era\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Book_eraId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Book_eraId_fkey",
+          "public",
+          "\"public\".\"Book\"",
+          "f",
+          "[\"eraId\"]",
+          "\"public\".\"Era\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.BookCharacter.BookCharacter_bookId_fkey",
+    "label": "Add foreign key \"BookCharacter_bookId_fkey\" on \"BookCharacter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "BookCharacter_bookId_fkey",
+        "table": "BookCharacter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"BookCharacter_bookId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "BookCharacter_bookId_fkey",
+          "public",
+          "\"public\".\"BookCharacter\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"BookCharacter_bookId_fkey\" on \"BookCharacter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"BookCharacter_bookId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"BookCharacter\"\nADD CONSTRAINT \"BookCharacter_bookId_fkey\"\nFOREIGN KEY (\"bookId\")\nREFERENCES \"public\".\"Book\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"BookCharacter_bookId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "BookCharacter_bookId_fkey",
+          "public",
+          "\"public\".\"BookCharacter\"",
+          "f",
+          "[\"bookId\"]",
+          "\"public\".\"Book\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.BookCharacter.BookCharacter_characterId_fkey",
+    "label": "Add foreign key \"BookCharacter_characterId_fkey\" on \"BookCharacter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "BookCharacter_characterId_fkey",
+        "table": "BookCharacter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"BookCharacter_characterId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "BookCharacter_characterId_fkey",
+          "public",
+          "\"public\".\"BookCharacter\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"BookCharacter_characterId_fkey\" on \"BookCharacter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"BookCharacter_characterId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"BookCharacter\"\nADD CONSTRAINT \"BookCharacter_characterId_fkey\"\nFOREIGN KEY (\"characterId\")\nREFERENCES \"public\".\"Character\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"BookCharacter_characterId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "BookCharacter_characterId_fkey",
+          "public",
+          "\"public\".\"BookCharacter\"",
+          "f",
+          "[\"characterId\"]",
+          "\"public\".\"Character\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.BookTag.BookTag_bookId_fkey",
+    "label": "Add foreign key \"BookTag_bookId_fkey\" on \"BookTag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "BookTag_bookId_fkey",
+        "table": "BookTag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"BookTag_bookId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "BookTag_bookId_fkey",
+          "public",
+          "\"public\".\"BookTag\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"BookTag_bookId_fkey\" on \"BookTag\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"BookTag_bookId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"BookTag\"\nADD CONSTRAINT \"BookTag_bookId_fkey\"\nFOREIGN KEY (\"bookId\")\nREFERENCES \"public\".\"Book\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"BookTag_bookId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "BookTag_bookId_fkey",
+          "public",
+          "\"public\".\"BookTag\"",
+          "f",
+          "[\"bookId\"]",
+          "\"public\".\"Book\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.BookTag.BookTag_tagId_fkey",
+    "label": "Add foreign key \"BookTag_tagId_fkey\" on \"BookTag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "BookTag_tagId_fkey",
+        "table": "BookTag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"BookTag_tagId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "BookTag_tagId_fkey",
+          "public",
+          "\"public\".\"BookTag\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"BookTag_tagId_fkey\" on \"BookTag\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"BookTag_tagId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"BookTag\"\nADD CONSTRAINT \"BookTag_tagId_fkey\"\nFOREIGN KEY (\"tagId\")\nREFERENCES \"public\".\"Tag\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"BookTag_tagId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "BookTag_tagId_fkey",
+          "public",
+          "\"public\".\"BookTag\"",
+          "f",
+          "[\"tagId\"]",
+          "\"public\".\"Tag\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Chapter.Chapter_bookId_fkey",
+    "label": "Add foreign key \"Chapter_bookId_fkey\" on \"Chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Chapter_bookId_fkey",
+        "table": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Chapter_bookId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Chapter_bookId_fkey",
+          "public",
+          "\"public\".\"Chapter\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Chapter_bookId_fkey\" on \"Chapter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Chapter_bookId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Chapter\"\nADD CONSTRAINT \"Chapter_bookId_fkey\"\nFOREIGN KEY (\"bookId\")\nREFERENCES \"public\".\"Book\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Chapter_bookId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Chapter_bookId_fkey",
+          "public",
+          "\"public\".\"Chapter\"",
+          "f",
+          "[\"bookId\"]",
+          "\"public\".\"Book\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Chapter.Chapter_arcId_fkey",
+    "label": "Add foreign key \"Chapter_arcId_fkey\" on \"Chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Chapter_arcId_fkey",
+        "table": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Chapter_arcId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Chapter_arcId_fkey",
+          "public",
+          "\"public\".\"Chapter\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Chapter_arcId_fkey\" on \"Chapter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Chapter_arcId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Chapter\"\nADD CONSTRAINT \"Chapter_arcId_fkey\"\nFOREIGN KEY (\"arcId\")\nREFERENCES \"public\".\"Arc\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Chapter_arcId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Chapter_arcId_fkey",
+          "public",
+          "\"public\".\"Chapter\"",
+          "f",
+          "[\"arcId\"]",
+          "\"public\".\"Arc\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Character.Character_universeId_fkey",
+    "label": "Add foreign key \"Character_universeId_fkey\" on \"Character\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Character_universeId_fkey",
+        "table": "Character"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Character_universeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Character_universeId_fkey",
+          "public",
+          "\"public\".\"Character\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Character_universeId_fkey\" on \"Character\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Character_universeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Character\"\nADD CONSTRAINT \"Character_universeId_fkey\"\nFOREIGN KEY (\"universeId\")\nREFERENCES \"public\".\"Universe\" (\"id\")"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Character_universeId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Character_universeId_fkey",
+          "public",
+          "\"public\".\"Character\"",
+          "f",
+          "[\"universeId\"]",
+          "\"public\".\"Universe\"",
+          "[\"id\"]",
+          "a",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.Era.Era_universeId_fkey",
+    "label": "Add foreign key \"Era_universeId_fkey\" on \"Era\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "Era_universeId_fkey",
+        "table": "Era"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"Era_universeId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Era_universeId_fkey",
+          "public",
+          "\"public\".\"Era\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"Era_universeId_fkey\" on \"Era\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"Era_universeId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"Era\"\nADD CONSTRAINT \"Era_universeId_fkey\"\nFOREIGN KEY (\"universeId\")\nREFERENCES \"public\".\"Universe\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"Era_universeId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "Era_universeId_fkey",
+          "public",
+          "\"public\".\"Era\"",
+          "f",
+          "[\"universeId\"]",
+          "\"public\".\"Universe\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Arc",
+    "label": "Enable row-level security on \"Arc\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Arc"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Arc\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Arc"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Arc\"",
+        "sql": "ALTER TABLE \"public\".\"Arc\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Arc\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Arc"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Book",
+    "label": "Enable row-level security on \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Book\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Book"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Book\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Book\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Book"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.BookCharacter",
+    "label": "Enable row-level security on \"BookCharacter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "BookCharacter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"BookCharacter\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "BookCharacter"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"BookCharacter\"",
+        "sql": "ALTER TABLE \"public\".\"BookCharacter\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"BookCharacter\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "BookCharacter"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.BookTag",
+    "label": "Enable row-level security on \"BookTag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "BookTag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"BookTag\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "BookTag"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"BookTag\"",
+        "sql": "ALTER TABLE \"public\".\"BookTag\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"BookTag\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "BookTag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Chapter",
+    "label": "Enable row-level security on \"Chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Chapter\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Chapter"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Chapter\"",
+        "sql": "ALTER TABLE \"public\".\"Chapter\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Chapter\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Chapter"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Character",
+    "label": "Enable row-level security on \"Character\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Character"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Character\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Character"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Character\"",
+        "sql": "ALTER TABLE \"public\".\"Character\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Character\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Character"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Era",
+    "label": "Enable row-level security on \"Era\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Era"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Era\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Era"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Era\"",
+        "sql": "ALTER TABLE \"public\".\"Era\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Era\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Era"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Tag",
+    "label": "Enable row-level security on \"Tag\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Tag"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Tag\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Tag"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Tag\"",
+        "sql": "ALTER TABLE \"public\".\"Tag\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Tag\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Tag"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.Universe",
+    "label": "Enable row-level security on \"Universe\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "Universe"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"Universe\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Universe"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"Universe\"",
+        "sql": "ALTER TABLE \"public\".\"Universe\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"Universe\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "Universe"
+        ]
+      }
+    ]
+  }
+]

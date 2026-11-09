@@ -1,0 +1,165 @@
+// use prisma-8
+
+enum PublishStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum StoryType {
+  SHORT_FICTION
+  NOVELLA
+  NOVEL
+  WEB_SERIAL
+}
+
+model Universe {
+  id          String      @id @onCreate(uuid())
+  name        String      @unique
+  slug        String      @unique
+  description Text?       // Replaced String @db.Text
+
+  eras        Era[]
+  books       Book[]
+  characters  Character[]
+
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+  @@rls
+}
+
+model Era {
+  id          String    @id @onCreate(uuid())
+  name        String
+  slug        String
+  description Text?
+
+  universe    Universe  @relation(fields: [universeId], references: [id], onDelete: Cascade)
+  universeId  String
+
+  books       Book[]
+
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@unique([universeId, slug])
+  @@rls
+}
+
+model Tag {
+  id          String    @id @onCreate(uuid())
+  name        String    @unique
+  slug        String    @unique
+
+  books       BookTag[] // Now points to the explicit join table
+
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+  @@rls
+}
+
+model Book {
+  id          String        @id @onCreate(uuid())
+  title       String
+  slug        String        @unique
+  description Text
+  author      String        @default("Yosef Ryan")
+  type        StoryType     @default(NOVEL)
+  status      PublishStatus @default(DRAFT)
+  coverImage  String?
+  wordCount   Int           @default(0)
+
+  universe    Universe?     @relation(fields: [universeId], references: [id])
+  universeId  String?
+  era         Era?          @relation(fields: [eraId], references: [id])
+  eraId       String?
+
+  arcs        Arc[]
+  chapters    Chapter[]
+  characters  BookCharacter[] // Now points to the explicit join table
+  tags        BookTag[]       // Now points to the explicit join table
+
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+  @@rls
+}
+
+// EXPLICIT JOIN TABLE: Book <-> Tag
+model BookTag {
+  bookId String
+  tagId  String
+  book   Book @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  tag    Tag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([bookId, tagId])
+  @@rls
+}
+
+// EXPLICIT JOIN TABLE: Book <-> Character
+model BookCharacter {
+  bookId      String
+  characterId String
+  book        Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  character   Character @relation(fields: [characterId], references: [id], onDelete: Cascade)
+
+  @@id([bookId, characterId])
+  @@rls
+}
+
+model Arc {
+  id          String    @id @onCreate(uuid())
+  title       String
+  slug        String
+  description Text?
+  coverImage  String?
+  orderIndex  Float
+
+  book        Book      @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId      String
+
+  chapters    Chapter[]
+
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@unique([bookId, slug])
+  @@rls
+}
+
+model Chapter {
+  id          String        @id @onCreate(uuid())
+  title       String
+  slug        String
+  summary     Text?
+  content     Text
+  orderIndex  Float
+  status      PublishStatus @default(DRAFT)
+  wordCount   Int           @default(0)
+
+  book        Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  bookId      String
+  arc         Arc?          @relation(fields: [arcId], references: [id])
+  arcId       String?
+
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+
+  @@unique([bookId, slug])
+  @@rls
+}
+
+model Character {
+  id          String    @id @onCreate(uuid())
+  name        String
+  description Text?
+  image       String?
+
+  universe    Universe? @relation(fields: [universeId], references: [id])
+  universeId  String?
+
+  books       BookCharacter[] // Now points to the explicit join table
+
+  createdAt   temporal.CreatedAt
+  updatedAt   temporal.UpdatedAt
+  @@rls
+}
