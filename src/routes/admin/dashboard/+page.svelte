@@ -1,12 +1,26 @@
+<script lang="ts">
+	import DashboardLayout from '#lib/components/templates/DashboardLayout.svelte';
+	import BookManagement from '#lib/components/organisms/BookManagement.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
+</script>
+
 <svelte:head>
-	<title>Dashboard</title>
+	<title>Dashboard - Books | Admin</title>
 	<meta name="robots" content="noindex, nofollow" />
 </svelte:head>
 
-<main class="mx-auto flex min-h-screen max-w-sm flex-col items-center justify-center gap-4 px-4">
-	<p class="text-lg">You are logged in as Admin.</p>
+<DashboardLayout currentPath="/admin/dashboard">
+	<header class="mb-8">
+		<h1 class="h1">Book Management</h1>
+		<p class="opacity-60">Manage your manuscripts, tags, story parameters, and publishing statuses.</p>
+	</header>
 
-	<form method="POST" action="/admin/logout">
-		<button class="btn preset-filled-primary-500">Log out</button>
-	</form>
-</main>
+	<BookManagement
+		books={data.books}
+		tags={data.tags}
+		universes={data.universes}
+		eras={data.eras}
+	/>
+</DashboardLayout>

@@ -75,7 +75,7 @@ model Book {
   title       String
   slug        String        @unique
   description Text
-  author      String        @default("Yosef Ryan")
+  author      String        @default("Ryhze")
   type        StoryType     @default(NOVEL)
   status      PublishStatus @default(DRAFT)
   coverImage  String?
