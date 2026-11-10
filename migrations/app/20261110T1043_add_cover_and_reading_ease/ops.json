@@ -1,0 +1,419 @@
+[
+  {
+    "id": "column.public.Book.publishedAt",
+    "label": "Add column \"publishedAt\" to \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "publishedAt",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"publishedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "publishedAt"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"publishedAt\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"publishedAt\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ADD COLUMN \"publishedAt\" timestamptz(3)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"publishedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "publishedAt"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"publishedAt\" on \"Book\""
+        }
+      },
+      {
+        "description": "verify column \"publishedAt\" has type \"timestamp(3) with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "publishedAt",
+          "timestamp(3) with time zone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Book.readingEase",
+    "label": "Add column \"readingEase\" to \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "readingEase",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"readingEase\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "readingEase"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"readingEase\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"readingEase\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ADD COLUMN \"readingEase\" float8"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"readingEase\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "readingEase"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"readingEase\" on \"Book\""
+        }
+      },
+      {
+        "description": "verify column \"readingEase\" has type \"double precision\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "readingEase",
+          "double precision"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Book.readingLevel",
+    "label": "Add column \"readingLevel\" to \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "readingLevel",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"readingLevel\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "readingLevel"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"readingLevel\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"readingLevel\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ADD COLUMN \"readingLevel\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"readingLevel\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "readingLevel"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"readingLevel\" on \"Book\""
+        }
+      },
+      {
+        "description": "verify column \"readingLevel\" has type \"text\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "readingLevel",
+          "text"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Chapter.publishedAt",
+    "label": "Add column \"publishedAt\" to \"Chapter\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "publishedAt",
+        "table": "Chapter"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"publishedAt\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Chapter",
+          "publishedAt"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"publishedAt\" on \"Chapter\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"publishedAt\"",
+        "sql": "ALTER TABLE \"public\".\"Chapter\" ADD COLUMN \"publishedAt\" timestamptz(3)"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"publishedAt\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Chapter",
+          "publishedAt"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"publishedAt\" on \"Chapter\""
+        }
+      },
+      {
+        "description": "verify column \"publishedAt\" has type \"timestamp(3) with time zone\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Chapter",
+          "publishedAt",
+          "timestamp(3) with time zone"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Era.orderIndex",
+    "label": "Add column \"orderIndex\" to \"Era\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "orderIndex",
+        "table": "Era"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"orderIndex\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Era",
+          "orderIndex"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"orderIndex\" on \"Era\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"orderIndex\"",
+        "sql": "ALTER TABLE \"public\".\"Era\" ADD COLUMN \"orderIndex\" float8 DEFAULT 0 NOT NULL"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"orderIndex\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Era",
+          "orderIndex"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"orderIndex\" on \"Era\""
+        }
+      },
+      {
+        "description": "verify column \"orderIndex\" has type \"double precision\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Era",
+          "orderIndex",
+          "double precision"
+        ]
+      },
+      {
+        "description": "verify column \"orderIndex\" is NOT NULL",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3 AND \"is_nullable\" = $4)) AS \"result\"",
+        "params": [
+          "public",
+          "Era",
+          "orderIndex",
+          "NO"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "column.public.Universe.coverImage",
+    "label": "Add column \"coverImage\" to \"Universe\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "coverImage",
+        "table": "Universe"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"coverImage\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Universe",
+          "coverImage"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"coverImage\" on \"Universe\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"coverImage\"",
+        "sql": "ALTER TABLE \"public\".\"Universe\" ADD COLUMN \"coverImage\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"coverImage\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Universe",
+          "coverImage"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"coverImage\" on \"Universe\""
+        }
+      },
+      {
+        "description": "verify column \"coverImage\" has type \"text\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "Universe",
+          "coverImage",
+          "text"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "checkConstraint.Book.Book_readingLevel_check_3168a776",
+    "label": "Add check constraint \"Book_readingLevel_check_3168a776\" on \"Book\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "checkConstraint",
+        "name": "Book_readingLevel_check_3168a776",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure constraint \"Book_readingLevel_check_3168a776\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "Book_readingLevel_check_3168a776",
+          "public",
+          "\"public\".\"Book\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "constraint \"Book_readingLevel_check_3168a776\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add check constraint \"Book_readingLevel_check_3168a776\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ADD CONSTRAINT \"Book_readingLevel_check_3168a776\" CHECK (\"readingLevel\" IN ('VERY_EASY', 'EASY', 'FAIRLY_EASY', 'STANDARD', 'FAIRLY_DIFFICULT', 'DIFFICULT', 'VERY_DIFFICULT'))"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify check constraint \"Book_readingLevel_check_3168a776\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4)) AS \"result\"",
+        "params": [
+          "Book_readingLevel_check_3168a776",
+          "public",
+          "\"public\".\"Book\"",
+          "c"
+        ]
+      }
+    ]
+  }
+]

@@ -62,6 +62,39 @@
               }
             ]
           },
+          "ReadingLevel": {
+            "codecId": "pg/text@1",
+            "members": [
+              {
+                "name": "VERY_EASY",
+                "value": "VERY_EASY"
+              },
+              {
+                "name": "EASY",
+                "value": "EASY"
+              },
+              {
+                "name": "FAIRLY_EASY",
+                "value": "FAIRLY_EASY"
+              },
+              {
+                "name": "STANDARD",
+                "value": "STANDARD"
+              },
+              {
+                "name": "FAIRLY_DIFFICULT",
+                "value": "FAIRLY_DIFFICULT"
+              },
+              {
+                "name": "DIFFICULT",
+                "value": "DIFFICULT"
+              },
+              {
+                "name": "VERY_DIFFICULT",
+                "value": "VERY_DIFFICULT"
+              }
+            ]
+          },
           "StoryType": {
             "codecId": "pg/text@1",
             "members": [
@@ -271,6 +304,36 @@
                   "kind": "scalar"
                 }
               },
+              "publishedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "readingEase": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "readingLevel": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                },
+                "valueSet": {
+                  "entityKind": "enum",
+                  "entityName": "ReadingLevel",
+                  "namespaceId": "public",
+                  "plane": "domain"
+                }
+              },
               "slug": {
                 "nullable": false,
                 "type": {
@@ -449,6 +512,15 @@
                 },
                 "id": {
                   "column": "id"
+                },
+                "publishedAt": {
+                  "column": "publishedAt"
+                },
+                "readingEase": {
+                  "column": "readingEase"
+                },
+                "readingLevel": {
+                  "column": "readingLevel"
                 },
                 "slug": {
                   "column": "slug"
@@ -651,6 +723,16 @@
                   "kind": "scalar"
                 }
               },
+              "publishedAt": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
               "slug": {
                 "nullable": false,
                 "type": {
@@ -756,6 +838,9 @@
                 },
                 "orderIndex": {
                   "column": "orderIndex"
+                },
+                "publishedAt": {
+                  "column": "publishedAt"
                 },
                 "slug": {
                   "column": "slug"
@@ -932,6 +1017,13 @@
                   "kind": "scalar"
                 }
               },
+              "orderIndex": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
               "slug": {
                 "nullable": false,
                 "type": {
@@ -1003,6 +1095,9 @@
                 },
                 "name": {
                   "column": "name"
+                },
+                "orderIndex": {
+                  "column": "orderIndex"
                 },
                 "slug": {
                   "column": "slug"
@@ -1103,6 +1198,13 @@
           },
           "Universe": {
             "fields": {
+              "coverImage": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -1201,6 +1303,9 @@
             },
             "storage": {
               "fields": {
+                "coverImage": {
+                  "column": "coverImage"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -1383,6 +1488,11 @@
             "Book": {
               "checks": [
                 {
+                  "expression": "\"readingLevel\" IN ('VERY_EASY', 'EASY', 'FAIRLY_EASY', 'STANDARD', 'FAIRLY_DIFFICULT', 'DIFFICULT', 'VERY_DIFFICULT')",
+                  "name": "Book_readingLevel_check_3168a776",
+                  "prefix": "Book_readingLevel_check"
+                },
+                {
                   "expression": "\"status\" IN ('DRAFT', 'PUBLISHED', 'ARCHIVED')",
                   "name": "Book_status_check_bc64f66b",
                   "prefix": "Book_status_check"
@@ -1430,6 +1540,30 @@
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
                   "nullable": false
+                },
+                "publishedAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "readingEase": {
+                  "codecId": "pg/float8@1",
+                  "dataType": "pg/float8",
+                  "nullable": true
+                },
+                "readingLevel": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true,
+                  "valueSet": {
+                    "entityKind": "valueSet",
+                    "entityName": "ReadingLevel",
+                    "namespaceId": "public",
+                    "plane": "storage"
+                  }
                 },
                 "slug": {
                   "codecId": "pg/text@1",
@@ -1769,6 +1903,14 @@
                   "dataType": "pg/float8",
                   "nullable": false
                 },
+                "publishedAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": true,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
                 "slug": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -1997,6 +2139,15 @@
                   "dataType": "pg/text",
                   "nullable": false
                 },
+                "orderIndex": {
+                  "codecId": "pg/float8@1",
+                  "dataType": "pg/float8",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
                 "slug": {
                   "codecId": "pg/text@1",
                   "dataType": "pg/text",
@@ -2118,6 +2269,11 @@
             },
             "Universe": {
               "columns": {
+                "coverImage": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
@@ -2185,6 +2341,18 @@
                 "ARCHIVED"
               ]
             },
+            "ReadingLevel": {
+              "kind": "valueSet",
+              "values": [
+                "VERY_EASY",
+                "EASY",
+                "FAIRLY_EASY",
+                "STANDARD",
+                "FAIRLY_DIFFICULT",
+                "DIFFICULT",
+                "VERY_DIFFICULT"
+              ]
+            },
             "StoryType": {
               "kind": "valueSet",
               "values": [
@@ -2200,7 +2368,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "4b51ce05ec8c8a3f7e343d9ebd6bd50db4d645c4fe1a8cb6b64541d3d7f9c934"
+    "storageHash": "602195f67d99e523e775aed0116c687583cc8fd6861fb9638867f05aedb67bb7"
   },
   "execution": {
     "executionHash": "f79cf81eb83059b66fb400e4b08e3ff8a77b95b57c8945f76546fb7be5292440",

@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'4b51ce05ec8c8a3f7e343d9ebd6bd50db4d645c4fe1a8cb6b64541d3d7f9c934'>;
+  StorageHashBase<'602195f67d99e523e775aed0116c687583cc8fd6861fb9638867f05aedb67bb7'>;
 export type ExecutionHash =
   ExecutionHashBase<'f79cf81eb83059b66fb400e4b08e3ff8a77b95b57c8945f76546fb7be5292440'>;
 export type ProfileHash =
@@ -279,6 +279,24 @@ type FieldTypeOverrides = {
   readonly public: {
     readonly models: {
       readonly Book: {
+        readonly readingLevel: {
+          readonly output:
+            | 'VERY_EASY'
+            | 'EASY'
+            | 'FAIRLY_EASY'
+            | 'STANDARD'
+            | 'FAIRLY_DIFFICULT'
+            | 'DIFFICULT'
+            | 'VERY_DIFFICULT';
+          readonly input:
+            | 'VERY_EASY'
+            | 'EASY'
+            | 'FAIRLY_EASY'
+            | 'STANDARD'
+            | 'FAIRLY_DIFFICULT'
+            | 'DIFFICULT'
+            | 'VERY_DIFFICULT';
+        };
         readonly status: {
           readonly output: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
           readonly input: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
@@ -316,6 +334,24 @@ export type FieldInputTypes = FieldTypesFromDomain<
 type ColumnTypeOverrides = {
   readonly public: {
     readonly Book: {
+      readonly readingLevel: {
+        readonly output:
+          | 'VERY_EASY'
+          | 'EASY'
+          | 'FAIRLY_EASY'
+          | 'STANDARD'
+          | 'FAIRLY_DIFFICULT'
+          | 'DIFFICULT'
+          | 'VERY_DIFFICULT';
+        readonly input:
+          | 'VERY_EASY'
+          | 'EASY'
+          | 'FAIRLY_EASY'
+          | 'STANDARD'
+          | 'FAIRLY_DIFFICULT'
+          | 'DIFFICULT'
+          | 'VERY_DIFFICULT';
+      };
       readonly status: {
         readonly output: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
         readonly input: 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
@@ -370,6 +406,9 @@ export namespace Models {
     description: FieldOutputTypes['public']['Book']['description'];
     eraId: FieldOutputTypes['public']['Book']['eraId'];
     id: FieldOutputTypes['public']['Book']['id'];
+    publishedAt: FieldOutputTypes['public']['Book']['publishedAt'];
+    readingEase: FieldOutputTypes['public']['Book']['readingEase'];
+    readingLevel: FieldOutputTypes['public']['Book']['readingLevel'];
     slug: FieldOutputTypes['public']['Book']['slug'];
     status: FieldOutputTypes['public']['Book']['status'];
     title: FieldOutputTypes['public']['Book']['title'];
@@ -406,6 +445,7 @@ export namespace Models {
     createdAt: FieldOutputTypes['public']['Chapter']['createdAt'];
     id: FieldOutputTypes['public']['Chapter']['id'];
     orderIndex: FieldOutputTypes['public']['Chapter']['orderIndex'];
+    publishedAt: FieldOutputTypes['public']['Chapter']['publishedAt'];
     slug: FieldOutputTypes['public']['Chapter']['slug'];
     status: FieldOutputTypes['public']['Chapter']['status'];
     summary: FieldOutputTypes['public']['Chapter']['summary'];
@@ -433,6 +473,7 @@ export namespace Models {
     description: FieldOutputTypes['public']['Era']['description'];
     id: FieldOutputTypes['public']['Era']['id'];
     name: FieldOutputTypes['public']['Era']['name'];
+    orderIndex: FieldOutputTypes['public']['Era']['orderIndex'];
     slug: FieldOutputTypes['public']['Era']['slug'];
     universeId: FieldOutputTypes['public']['Era']['universeId'];
     updatedAt: FieldOutputTypes['public']['Era']['updatedAt'];
@@ -450,6 +491,7 @@ export namespace Models {
     readonly [RelationKeys]?: 'books';
   };
   export type public_Universe = {
+    coverImage: FieldOutputTypes['public']['Universe']['coverImage'];
     createdAt: FieldOutputTypes['public']['Universe']['createdAt'];
     description: FieldOutputTypes['public']['Universe']['description'];
     id: FieldOutputTypes['public']['Universe']['id'];
@@ -620,6 +662,25 @@ type ContractBase = Omit<
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
                   readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly publishedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+                readonly readingEase: {
+                  readonly dataType: 'pg/float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly readingLevel: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
                   readonly many: false;
                 };
                 readonly slug: {
@@ -876,6 +937,13 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly publishedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: true;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
                 readonly slug: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1064,6 +1132,16 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly many: false;
                 };
+                readonly orderIndex: {
+                  readonly dataType: 'pg/float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/float8@1', 0>;
+                  };
+                  readonly many: false;
+                };
                 readonly slug: {
                   readonly dataType: 'pg/text';
                   readonly codecId: 'pg/text@1';
@@ -1154,6 +1232,12 @@ type ContractBase = Omit<
             };
             readonly Universe: {
               columns: {
+                readonly coverImage: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-date@1';
@@ -1206,6 +1290,18 @@ type ContractBase = Omit<
             readonly PublishStatus: {
               readonly kind: 'valueSet';
               readonly values: readonly ['DRAFT', 'PUBLISHED', 'ARCHIVED'];
+            };
+            readonly ReadingLevel: {
+              readonly kind: 'valueSet';
+              readonly values: readonly [
+                'VERY_EASY',
+                'EASY',
+                'FAIRLY_EASY',
+                'STANDARD',
+                'FAIRLY_DIFFICULT',
+                'DIFFICULT',
+                'VERY_DIFFICULT',
+              ];
             };
             readonly StoryType: {
               readonly kind: 'valueSet';
@@ -1354,6 +1450,22 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly publishedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly readingEase: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly readingLevel: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly slug: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1461,6 +1573,9 @@ type ContractBase = Omit<
                 readonly description: { readonly column: 'description' };
                 readonly eraId: { readonly column: 'eraId' };
                 readonly id: { readonly column: 'id' };
+                readonly publishedAt: { readonly column: 'publishedAt' };
+                readonly readingEase: { readonly column: 'readingEase' };
+                readonly readingLevel: { readonly column: 'readingLevel' };
                 readonly slug: { readonly column: 'slug' };
                 readonly status: { readonly column: 'status' };
                 readonly title: { readonly column: 'title' };
@@ -1584,6 +1699,14 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
               };
+              readonly publishedAt: {
+                readonly nullable: true;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
               readonly slug: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1643,6 +1766,7 @@ type ContractBase = Omit<
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly id: { readonly column: 'id' };
                 readonly orderIndex: { readonly column: 'orderIndex' };
+                readonly publishedAt: { readonly column: 'publishedAt' };
                 readonly slug: { readonly column: 'slug' };
                 readonly status: { readonly column: 'status' };
                 readonly summary: { readonly column: 'summary' };
@@ -1752,6 +1876,10 @@ type ContractBase = Omit<
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
               };
+              readonly orderIndex: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
               readonly slug: {
                 readonly nullable: false;
                 readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
@@ -1799,6 +1927,7 @@ type ContractBase = Omit<
                 readonly description: { readonly column: 'description' };
                 readonly id: { readonly column: 'id' };
                 readonly name: { readonly column: 'name' };
+                readonly orderIndex: { readonly column: 'orderIndex' };
                 readonly slug: { readonly column: 'slug' };
                 readonly universeId: { readonly column: 'universeId' };
                 readonly updatedAt: { readonly column: 'updatedAt' };
@@ -1863,6 +1992,10 @@ type ContractBase = Omit<
           };
           readonly Universe: {
             readonly fields: {
+              readonly coverImage: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -1929,6 +2062,7 @@ type ContractBase = Omit<
               readonly table: 'Universe';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly coverImage: { readonly column: 'coverImage' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly description: { readonly column: 'description' };
                 readonly id: { readonly column: 'id' };
@@ -1948,6 +2082,18 @@ type ContractBase = Omit<
               { readonly name: 'ARCHIVED'; readonly value: 'ARCHIVED' },
             ];
           };
+          readonly ReadingLevel: {
+            readonly codecId: 'pg/text@1';
+            readonly members: readonly [
+              { readonly name: 'VERY_EASY'; readonly value: 'VERY_EASY' },
+              { readonly name: 'EASY'; readonly value: 'EASY' },
+              { readonly name: 'FAIRLY_EASY'; readonly value: 'FAIRLY_EASY' },
+              { readonly name: 'STANDARD'; readonly value: 'STANDARD' },
+              { readonly name: 'FAIRLY_DIFFICULT'; readonly value: 'FAIRLY_DIFFICULT' },
+              { readonly name: 'DIFFICULT'; readonly value: 'DIFFICULT' },
+              { readonly name: 'VERY_DIFFICULT'; readonly value: 'VERY_DIFFICULT' },
+            ];
+          };
           readonly StoryType: {
             readonly codecId: 'pg/text@1';
             readonly members: readonly [
@@ -1963,6 +2109,15 @@ type ContractBase = Omit<
             { readonly name: 'DRAFT'; readonly value: 'DRAFT' },
             { readonly name: 'PUBLISHED'; readonly value: 'PUBLISHED' },
             { readonly name: 'ARCHIVED'; readonly value: 'ARCHIVED' },
+          ];
+          readonly ReadingLevel: readonly [
+            { readonly name: 'VERY_EASY'; readonly value: 'VERY_EASY' },
+            { readonly name: 'EASY'; readonly value: 'EASY' },
+            { readonly name: 'FAIRLY_EASY'; readonly value: 'FAIRLY_EASY' },
+            { readonly name: 'STANDARD'; readonly value: 'STANDARD' },
+            { readonly name: 'FAIRLY_DIFFICULT'; readonly value: 'FAIRLY_DIFFICULT' },
+            { readonly name: 'DIFFICULT'; readonly value: 'DIFFICULT' },
+            { readonly name: 'VERY_DIFFICULT'; readonly value: 'VERY_DIFFICULT' },
           ];
           readonly StoryType: readonly [
             { readonly name: 'SHORT_FICTION'; readonly value: 'SHORT_FICTION' },

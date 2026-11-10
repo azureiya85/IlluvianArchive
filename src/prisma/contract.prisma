@@ -13,11 +13,22 @@ enum StoryType {
   WEB_SERIAL
 }
 
+enum ReadingLevel {
+  VERY_EASY         // 90–100
+  EASY              // 80–90
+  FAIRLY_EASY       // 70–80
+  STANDARD          // 60–70
+  FAIRLY_DIFFICULT  // 50–60
+  DIFFICULT         // 30–50
+  VERY_DIFFICULT    // 0–30
+}
+
 model Universe {
   id          String      @id @onCreate(uuid())
   name        String      @unique
   slug        String      @unique
   description Text?       // Replaced String @db.Text
+  coverImage  String?
 
   eras        Era[]
   books       Book[]
@@ -33,6 +44,7 @@ model Era {
   name        String
   slug        String
   description Text?
+  orderIndex Float @default(0)
 
   universe    Universe  @relation(fields: [universeId], references: [id], onDelete: Cascade)
   universeId  String
@@ -68,6 +80,9 @@ model Book {
   status      PublishStatus @default(DRAFT)
   coverImage  String?
   wordCount   Int           @default(0)
+  readingEase   Float?          // unclamped; real text can score below 0 or above 100
+  readingLevel  ReadingLevel?
+  publishedAt DateTime?
 
   universe    Universe?     @relation(fields: [universeId], references: [id])
   universeId  String?
@@ -135,6 +150,7 @@ model Chapter {
   orderIndex  Float
   status      PublishStatus @default(DRAFT)
   wordCount   Int           @default(0)
+  publishedAt DateTime?
 
   book        Book          @relation(fields: [bookId], references: [id], onDelete: Cascade)
   bookId      String
