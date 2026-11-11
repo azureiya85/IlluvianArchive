@@ -3,6 +3,7 @@
 	import Form from '#lib/components/atoms/Form.svelte';
 	import Card from '#lib/components/atoms/Card.svelte';
 	import Button from '#lib/components/atoms/Button.svelte';
+	import MarkdownEditor from '#lib/components/atoms/MarkdownEditor.svelte';
 
 	interface Tag { id: string; name: string; slug: string; }
 	interface Book {
@@ -50,13 +51,16 @@
 			: ''
 	);
 
+	// Bind the description state here so the MarkdownEditor can control it
+	let bookDescription = $state(untrack(() => book?.description ?? ''));
+
 	// Helper to check if a tag was already assigned to this book
 	function hasTag(tagId: string) {
 		return book?.tags?.some(t => t.tagId === tagId) ?? false;
 	}
 </script>
 
-<Card class="preset-filled-surface-100-900 mx-auto max-w-4xl p-6">
+<Card class="preset-filled-surface-100-900 mx-auto max-w-5xl p-6">
 	<Form method="POST" {action} class="space-y-6" submitEnhance={() => {
 		loading = true;
 		return async ({ update }) => {
@@ -100,10 +104,16 @@
 				</label>
 			</div>
 
-			<label class="label">
-				<span class="label-text">Description</span>
-				<textarea class="textarea" name="description" rows="4" required placeholder="Synopsis...">{book?.description ?? ''}</textarea>
-			</label>
+			<div class="space-y-1">
+				<span class="label-text">Description / Synopsis</span>
+				<MarkdownEditor
+					name="description"
+					bind:value={bookDescription}
+					required={true}
+					rows={8}
+					placeholder="Enter a punchy synopsis..."
+				/>
+			</div>
 		</fieldset>
 
 		<fieldset class="fieldset space-y-4">
@@ -150,7 +160,6 @@
 				{/if}
 			</div>
 		</fieldset>
-		<!-- ------------------------- -->
 
 		<fieldset class="fieldset space-y-4">
 			<legend class="legend">Publishing Details</legend>

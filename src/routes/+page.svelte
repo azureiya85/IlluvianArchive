@@ -1,3 +1,19 @@
-<h1>Welcome to your library project</h1>
-<p>Create your package using @sveltejs/package and preview/showcase your work with SvelteKit</p>
-<p>Visit <a href="https://svelte.dev/docs/kit">svelte.dev/docs/kit</a> to read the documentation</p>
+<script lang="ts">
+	import LandingPageLayout from '#lib/components/templates/LandingPageLayout.svelte';
+	import type { PageProps } from './$types';
+
+	let { data }: PageProps = $props();
+</script>
+
+<svelte:head>
+	<title>Illuvian Archive</title>
+	<meta name="description" content="Welcome to the Illuvian Archive." />
+</svelte:head>
+
+<LandingPageLayout
+	featuredBooks={data.featuredBooks}
+	latestChapters={data.latestChapters}
+	chapterPage={data.chapterPage}
+	chapterPageSize={data.chapterPageSize}
+	chapterTotal={data.chapterTotal}
+/>

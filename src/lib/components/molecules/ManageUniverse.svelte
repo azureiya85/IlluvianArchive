@@ -1,8 +1,8 @@
 <script lang="ts">
 	import Card from '#lib/components/atoms/Card.svelte';
 	import Button from '#lib/components/atoms/Button.svelte';
+	import DeleteDialog from '#lib/components/atoms/DeleteDialog.svelte';
 	import EditIcon from '@lucide/svelte/icons/pencil';
-	import TrashIcon from '@lucide/svelte/icons/trash-2';
 
 	interface Universe {
 		id: string;
@@ -39,12 +39,8 @@
 							<Button class="btn-icon btn-icon-sm preset-filled-primary-500" onclick={() => onEdit(universe)} title="Edit">
 								<EditIcon class="size-4" />
 							</Button>
-							<form method="POST" action="?/deleteUniverse">
-								<input type="hidden" name="id" value={universe.id} />
-								<Button class="btn-icon btn-icon-sm preset-filled-error-500" title="Delete">
-									<TrashIcon class="size-4" />
-								</Button>
-							</form>
+
+							<DeleteDialog action="?/deleteUniverse" id={universe.id} />
 						</div>
 					</td>
 				</tr>

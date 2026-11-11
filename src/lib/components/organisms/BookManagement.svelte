@@ -59,7 +59,7 @@
 </script>
 
 {#snippet manageContent()}
-	<ManageBook {books} onEdit={startEdit} />
+	<ManageBook {books} {tags} onEdit={startEdit} />
 {/snippet}
 
 {#snippet createContent()}
@@ -73,5 +73,7 @@
 {#snippet tagsContent()}
 	<ManageTag {tags} />
 {/snippet}
+
+
 
 <Tabs bind:value={activeTab} tabs={tabList} />

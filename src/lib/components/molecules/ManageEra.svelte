@@ -2,8 +2,8 @@
 	import Card from '#lib/components/atoms/Card.svelte';
 	import Button from '#lib/components/atoms/Button.svelte';
 	import Badge from '#lib/components/atoms/Badge.svelte';
+	import DeleteDialog from '#lib/components/atoms/DeleteDialog.svelte';
 	import EditIcon from '@lucide/svelte/icons/pencil';
-	import TrashIcon from '@lucide/svelte/icons/trash-2';
 
 	interface Era {
 		id: string;
@@ -55,12 +55,8 @@
 							<Button class="btn-icon btn-icon-sm preset-filled-primary-500" onclick={() => onEdit(era)} title="Edit">
 								<EditIcon class="size-4" />
 							</Button>
-							<form method="POST" action="?/deleteEra">
-								<input type="hidden" name="id" value={era.id} />
-								<Button class="btn-icon btn-icon-sm preset-filled-error-500" title="Delete">
-									<TrashIcon class="size-4" />
-								</Button>
-							</form>
+
+							<DeleteDialog action="?/deleteEra" id={era.id} />
 						</div>
 					</td>
 				</tr>
