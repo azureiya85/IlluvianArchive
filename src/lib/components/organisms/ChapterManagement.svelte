@@ -29,7 +29,7 @@
 		bookId: string;
 	}
 
-	interface Book { id: string; title: string; }
+	interface Book { id: string; title: string; slug: string; }
 
 	interface Props {
 		chapters?: Chapter[];

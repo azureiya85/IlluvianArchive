@@ -62,44 +62,49 @@ export const actions: Actions = {
 	},
 
 	updateBook: async ({ request }) => {
-		const data = await request.formData();
-		const id = data.get('id') as string;
+			const data = await request.formData();
+			const id = data.get('id') as string;
 
-		const publishedAtRaw = data.get('publishedAt') as string;
-		const readingEaseRaw = data.get('readingEase') as string;
-		const selectedTags = data.getAll('tags') as string[];
+			const publishedAtRaw = data.get('publishedAt') as string;
+			const readingEaseRaw = data.get('readingEase') as string;
 
-		await db.orm.public.Book.where({ id }).update({
-			title: data.get('title') as string,
-			slug: data.get('slug') as string,
-			description: data.get('description') as string,
-			author: data.get('author') as string,
-			type: data.get('type') as StoryType,
-			status: data.get('status') as PublishStatus,
-			coverImage: (data.get('coverImage') as string) || null,
-			wordCount: parseInt(data.get('wordCount') as string) || 0,
-			readingEase: readingEaseRaw ? parseFloat(readingEaseRaw) : null,
-			readingLevel: (data.get('readingLevel') as ReadingLevel) || null,
-			publishedAt: publishedAtRaw ? new Date(publishedAtRaw) : null,
-			universeId: (data.get('universeId') as string) || null,
-			eraId: (data.get('eraId') as string) || null,
-		});
+			const selectedTags = [...new Set(data.getAll('tags') as string[])];
 
-		await db.orm.public.BookTag.where({ bookId: id }).delete();
+			await db.orm.public.Book.where({ id }).update({
+				title: data.get('title') as string,
+				slug: data.get('slug') as string,
+				description: data.get('description') as string,
+				author: data.get('author') as string,
+				type: data.get('type') as StoryType,
+				status: data.get('status') as PublishStatus,
+				coverImage: (data.get('coverImage') as string) || null,
+				wordCount: parseInt(data.get('wordCount') as string) || 0,
+				readingEase: readingEaseRaw ? parseFloat(readingEaseRaw) : null,
+				readingLevel: (data.get('readingLevel') as ReadingLevel) || null,
+				publishedAt: publishedAtRaw ? new Date(publishedAtRaw) : null,
+				universeId: (data.get('universeId') as string) || null,
+				eraId: (data.get('eraId') as string) || null,
+			});
 
-		if (selectedTags.length > 0) {
-			await Promise.all(
-				selectedTags.map(tagId =>
-					db.orm.public.BookTag.create({
-						bookId: id,
-						tagId: tagId
-					})
-				)
-			);
-		}
+			const existingTags = await db.orm.public.BookTag.where({ bookId: id }).all();
+			const existingTagIds = existingTags.map(bt => bt.tagId);
 
-		return { success: true };
-	},
+			const tagsToAdd = selectedTags.filter(tagId => !existingTagIds.includes(tagId));
+			const tagsToRemove = existingTagIds.filter(tagId => !selectedTags.includes(tagId));
+
+			for (const tagId of tagsToRemove) {
+				await db.orm.public.BookTag.where({ bookId: id, tagId }).delete();
+			}
+
+			for (const tagId of tagsToAdd) {
+				await db.orm.public.BookTag.create({
+					bookId: id,
+					tagId: tagId
+				});
+			}
+
+			return { success: true };
+		},
 
 	deleteBook: async ({ request }) => {
 		const data = await request.formData();

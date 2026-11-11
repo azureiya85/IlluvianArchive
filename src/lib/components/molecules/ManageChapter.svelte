@@ -1,9 +1,11 @@
 <script lang="ts">
+	import { resolve } from '$app/paths';
 	import Card from '#lib/components/atoms/Card.svelte';
 	import Button from '#lib/components/atoms/Button.svelte';
 	import Badge from '#lib/components/atoms/Badge.svelte';
 	import EditIcon from '@lucide/svelte/icons/pencil';
 	import TrashIcon from '@lucide/svelte/icons/trash-2';
+	import EyeIcon from '@lucide/svelte/icons/eye';
 
 	interface Chapter {
 		id: string;
@@ -19,7 +21,7 @@
 		arcId?: string | null;
 	}
 
-	interface Book { id: string; title: string; }
+	interface Book { id: string; title: string; slug: string; }
 	interface Arc { id: string; title: string; }
 
 	interface Props {
@@ -33,6 +35,10 @@
 
 	function getBookTitle(id: string) {
 		return books.find(b => b.id === id)?.title ?? 'Unknown Book';
+	}
+
+	function getBookSlug(id: string) {
+		return books.find(b => b.id === id)?.slug ?? '';
 	}
 
 	function getArcTitle(id?: string | null) {
@@ -55,6 +61,7 @@
 		<tbody class="divide-surface-200-800 divide-y">
 			{#each chapters as chapter (chapter.id)}
 				{@const arcTitle = getArcTitle(chapter.arcId)}
+				{@const bookSlug = getBookSlug(chapter.bookId)}
 				<tr class="hover:preset-tonal-surface">
 					<td class="p-3 opacity-75">{chapter.orderIndex}</td>
 					<td class="p-3">
@@ -76,9 +83,23 @@
 					</td>
 					<td class="p-3 text-right">
 						<div class="flex justify-end gap-2">
+						<a
+							href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', {
+								bookSlug,
+								chapterSlug: chapter.slug
+							})}
+							target="_blank"
+							title="View Chapter"
+						>
+								<Button class="btn-icon btn-icon-sm preset-filled-surface-500 hover:preset-filled-secondary-500" type="button">
+									<EyeIcon class="size-4" />
+								</Button>
+							</a>
+
 							<Button class="btn-icon btn-icon-sm preset-filled-primary-500" onclick={() => onEdit(chapter)} title="Edit">
 								<EditIcon class="size-4" />
 							</Button>
+
 							<form method="POST" action="?/deleteChapter">
 								<input type="hidden" name="id" value={chapter.id} />
 								<Button class="btn-icon btn-icon-sm preset-filled-error-500" title="Delete">
