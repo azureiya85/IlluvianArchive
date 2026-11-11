@@ -19,6 +19,7 @@
 		publishedAt?: Date | null;
 		universeId?: string | null;
 		eraId?: string | null;
+		tags?: { tagId: string }[];
 	}
 
 	interface Tag { id: string; name: string; slug: string; }
@@ -62,11 +63,11 @@
 {/snippet}
 
 {#snippet createContent()}
-	<BookForm {universes} {eras} onSuccess={resetView} />
+	<BookForm {tags} {universes} {eras} onSuccess={resetView} />
 {/snippet}
 
 {#snippet editContent()}
-	<BookForm book={editingBook} {universes} {eras} onSuccess={resetView} onCancel={resetView} />
+	<BookForm book={editingBook} {tags} {universes} {eras} onSuccess={resetView} onCancel={resetView} />
 {/snippet}
 
 {#snippet tagsContent()}

@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { untrack } from 'svelte'; // <-- Add this import
+	import { untrack } from 'svelte';
 	import Form from '#lib/components/atoms/Form.svelte';
 	import Card from '#lib/components/atoms/Card.svelte';
 	import Button from '#lib/components/atoms/Button.svelte';
 
+	interface Tag { id: string; name: string; slug: string; }
 	interface Book {
 		id: string;
 		title: string;
@@ -19,6 +20,7 @@
 		publishedAt?: Date | null;
 		universeId?: string | null;
 		eraId?: string | null;
+		tags?: { tagId: string }[];
 	}
 
 	interface Universe { id: string; name: string; }
@@ -26,13 +28,14 @@
 
 	interface Props {
 		book?: Book | null;
+		tags?: Tag[];
 		universes: Universe[];
 		eras: Era[];
 		onSuccess: () => void;
 		onCancel?: () => void;
 	}
 
-	let { book = null, universes, eras, onSuccess, onCancel }: Props = $props();
+	let { book = null, tags = [], universes, eras, onSuccess, onCancel }: Props = $props();
 
 	let loading = $state(false);
 	let action = $derived(book ? '?/updateBook' : '?/createBook');
@@ -46,6 +49,11 @@
 			? new Date(book.publishedAt).toISOString().slice(0, 16)
 			: ''
 	);
+
+	// Helper to check if a tag was already assigned to this book
+	function hasTag(tagId: string) {
+		return book?.tags?.some(t => t.tagId === tagId) ?? false;
+	}
 </script>
 
 <Card class="preset-filled-surface-100-900 mx-auto max-w-4xl p-6">
@@ -121,6 +129,28 @@
 				</label>
 			</div>
 		</fieldset>
+
+		<fieldset class="fieldset space-y-4">
+			<legend class="legend">Tags</legend>
+			<div class="flex flex-wrap gap-3">
+				{#each tags as tag (tag.id)}
+					<label class="flex cursor-pointer items-center space-x-2">
+						<input
+							class="checkbox"
+							type="checkbox"
+							name="tags"
+							value={tag.id}
+							checked={hasTag(tag.id)}
+						/>
+						<span class="text-sm font-medium">{tag.name}</span>
+					</label>
+				{/each}
+				{#if tags.length === 0}
+					<span class="text-sm opacity-50">No tags created yet. Go to the Tag List tab to make some.</span>
+				{/if}
+			</div>
+		</fieldset>
+		<!-- ------------------------- -->
 
 		<fieldset class="fieldset space-y-4">
 			<legend class="legend">Publishing Details</legend>

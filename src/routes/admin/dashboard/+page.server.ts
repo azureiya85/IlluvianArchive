@@ -1,11 +1,16 @@
 import { redirect } from '@sveltejs/kit';
 import { db } from '#lib/server/db.ts';
-import type { PageServerLoad } from './$types';
+import type { PageServerLoad, Actions } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	if (!locals.isAdmin) redirect(303, '/');
 
-	const books = await db.orm.public.Book.orderBy((b) => b.createdAt.desc()).all();
+	// Prisma 8 uses string literals for .include()
+	const books = await db.orm.public.Book
+		.include('tags')
+		.orderBy((b) => b.createdAt.desc())
+		.all();
+
 	const tags = await db.orm.public.Tag.orderBy((t) => t.name.asc()).all();
 	const universes = await db.orm.public.Universe.orderBy((u) => u.name.asc()).all();
 	const eras = await db.orm.public.Era.orderBy((e) => e.orderIndex.asc()).all();
@@ -17,14 +22,15 @@ type StoryType = 'NOVEL' | 'NOVELLA' | 'SHORT_FICTION' | 'WEB_SERIAL';
 type PublishStatus = 'DRAFT' | 'PUBLISHED' | 'ARCHIVED';
 type ReadingLevel = 'VERY_EASY' | 'EASY' | 'FAIRLY_EASY' | 'STANDARD' | 'FAIRLY_DIFFICULT' | 'DIFFICULT' | 'VERY_DIFFICULT';
 
-export const actions = {
+export const actions: Actions = {
 	createBook: async ({ request }) => {
 		const data = await request.formData();
 
 		const publishedAtRaw = data.get('publishedAt') as string;
 		const readingEaseRaw = data.get('readingEase') as string;
+		const selectedTags = data.getAll('tags') as string[];
 
-		await db.orm.public.Book.create({
+		const newBook = await db.orm.public.Book.create({
 			title: data.get('title') as string,
 			slug: data.get('slug') as string,
 			description: data.get('description') as string,
@@ -40,6 +46,18 @@ export const actions = {
 			eraId: (data.get('eraId') as string) || null,
 		});
 
+		// Use Promise.all to insert multiple relations
+		if (selectedTags.length > 0) {
+			await Promise.all(
+				selectedTags.map(tagId =>
+					db.orm.public.BookTag.create({
+						bookId: newBook.id,
+						tagId: tagId
+					})
+				)
+			);
+		}
+
 		return { success: true };
 	},
 
@@ -49,6 +67,7 @@ export const actions = {
 
 		const publishedAtRaw = data.get('publishedAt') as string;
 		const readingEaseRaw = data.get('readingEase') as string;
+		const selectedTags = data.getAll('tags') as string[];
 
 		await db.orm.public.Book.where({ id }).update({
 			title: data.get('title') as string,
@@ -65,6 +84,19 @@ export const actions = {
 			universeId: (data.get('universeId') as string) || null,
 			eraId: (data.get('eraId') as string) || null,
 		});
+
+		await db.orm.public.BookTag.where({ bookId: id }).delete();
+
+		if (selectedTags.length > 0) {
+			await Promise.all(
+				selectedTags.map(tagId =>
+					db.orm.public.BookTag.create({
+						bookId: id,
+						tagId: tagId
+					})
+				)
+			);
+		}
 
 		return { success: true };
 	},
