@@ -1,0 +1,62 @@
+[
+  {
+    "id": "column.public.SiteSettings.ownerCoverImage",
+    "label": "Add column \"ownerCoverImage\" to \"SiteSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "ownerCoverImage",
+        "table": "SiteSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"ownerCoverImage\" is missing",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "SiteSettings",
+          "ownerCoverImage"
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "column \"ownerCoverImage\" on \"SiteSettings\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add column \"ownerCoverImage\"",
+        "sql": "ALTER TABLE \"public\".\"SiteSettings\" ADD COLUMN \"ownerCoverImage\" text"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify column \"ownerCoverImage\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "SiteSettings",
+          "ownerCoverImage"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"ownerCoverImage\" on \"SiteSettings\""
+        }
+      },
+      {
+        "description": "verify column \"ownerCoverImage\" has type \"text\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_attribute\" AS \"a\" INNER JOIN \"pg_class\" AS \"c\" ON \"c\".\"oid\" = \"a\".\"attrelid\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"a\".\"attname\" = $3 AND (format_type(\"a\".\"atttypid\", \"a\".\"atttypmod\")) = $4 AND NOT (\"a\".\"attisdropped\"))) AS \"result\"",
+        "params": [
+          "public",
+          "SiteSettings",
+          "ownerCoverImage",
+          "text"
+        ]
+      }
+    ]
+  }
+]

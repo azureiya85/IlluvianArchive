@@ -1,0 +1,314 @@
+[
+  {
+    "id": "table.FaqItem",
+    "label": "Create table \"FaqItem\"",
+    "summary": "Creates table \"FaqItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "FaqItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"FaqItem\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FaqItem\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"FaqItem\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"FaqItem\"",
+        "sql": "CREATE TABLE \"public\".\"FaqItem\" (\n  \"answer\" text NOT NULL,\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"id\" text NOT NULL,\n  \"orderIndex\" float8 DEFAULT 0 NOT NULL,\n  \"question\" text NOT NULL,\n  \"settingsId\" text DEFAULT 'global' NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"FaqItem\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"FaqItem\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"FaqItem\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "table.SiteSettings",
+    "label": "Create table \"SiteSettings\"",
+    "summary": "Creates table \"SiteSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "table",
+        "name": "SiteSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure table \"SiteSettings\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"SiteSettings\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "table \"SiteSettings\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create table \"SiteSettings\"",
+        "sql": "CREATE TABLE \"public\".\"SiteSettings\" (\n  \"aboutContent\" text,\n  \"contactEmail\" text,\n  \"createdAt\" timestamptz(3) NOT NULL,\n  \"heroBanner\" text,\n  \"id\" text DEFAULT 'global' NOT NULL,\n  \"logo\" text,\n  \"ownerName\" text DEFAULT 'Ryhze',\n  \"siteTitle\" text DEFAULT 'Illuvian Archive' NOT NULL,\n  \"updatedAt\" timestamptz(3) NOT NULL,\n  PRIMARY KEY (\"id\")\n)",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify table \"SiteSettings\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3))) AS \"result\"",
+        "params": [
+          "\"public\".\"SiteSettings\"",
+          "r",
+          "p"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "table \"SiteSettings\""
+        }
+      }
+    ]
+  },
+  {
+    "id": "setDefault.Book.author",
+    "label": "Set default on \"Book\".\"author\"",
+    "operationClass": "widening",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "column",
+        "name": "author",
+        "table": "Book"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure column \"author\" exists",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"information_schema\".\"columns\" WHERE (\"table_schema\" = $1 AND \"table_name\" = $2 AND \"column_name\" = $3)) AS \"result\"",
+        "params": [
+          "public",
+          "Book",
+          "author"
+        ],
+        "expectation": {
+          "expects": "present",
+          "object": "column \"author\" on \"Book\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "set default on \"author\"",
+        "sql": "ALTER TABLE \"public\".\"Book\" ALTER COLUMN \"author\" SET DEFAULT 'Ryhze'"
+      }
+    ],
+    "postcheck": []
+  },
+  {
+    "id": "index.FaqItem.FaqItem_settingsId_idx_6654474f",
+    "label": "Create index \"FaqItem_settingsId_idx_6654474f\" on \"FaqItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "index",
+        "name": "FaqItem_settingsId_idx_6654474f",
+        "table": "FaqItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure index \"FaqItem_settingsId_idx_6654474f\" does not exist",
+        "sql": "SELECT (to_regclass($1)) IS NULL AS \"result\"",
+        "params": [
+          "\"public\".\"FaqItem_settingsId_idx_6654474f\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "index \"FaqItem_settingsId_idx_6654474f\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "create index \"FaqItem_settingsId_idx_6654474f\"",
+        "sql": "CREATE INDEX \"FaqItem_settingsId_idx_6654474f\" ON \"public\".\"FaqItem\" (\"settingsId\")",
+        "params": []
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify index \"FaqItem_settingsId_idx_6654474f\" exists on \"FaqItem\" with the planned definition",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_index\" AS \"i\" ON \"i\".\"indexrelid\" = \"c\".\"oid\" INNER JOIN \"pg_am\" AS \"m\" ON \"m\".\"oid\" = \"c\".\"relam\" WHERE (\"c\".\"oid\" = to_regclass($1) AND (\"c\".\"relkind\" = $2 OR \"c\".\"relkind\" = $3) AND \"i\".\"indrelid\" = to_regclass($4) AND NOT (\"i\".\"indisunique\") AND \"m\".\"amname\" = $5 AND (\"i\".\"indexprs\" IS NULL AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"i\".\"indkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"i\".\"indrelid\" AND key_attribute.attnum = key_column.attnum) = ($6)::jsonb) AND \"i\".\"indpred\" IS NULL)) AS \"result\"",
+        "params": [
+          "\"public\".\"FaqItem_settingsId_idx_6654474f\"",
+          "i",
+          "I",
+          "\"public\".\"FaqItem\"",
+          "btree",
+          "[\"settingsId\"]"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "foreignKey.FaqItem.FaqItem_settingsId_fkey",
+    "label": "Add foreign key \"FaqItem_settingsId_fkey\" on \"FaqItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "foreignKey",
+        "name": "FaqItem_settingsId_fkey",
+        "table": "FaqItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "ensure FK \"FaqItem_settingsId_fkey\" does not exist",
+        "sql": "SELECT NOT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3))) AS \"result\"",
+        "params": [
+          "FaqItem_settingsId_fkey",
+          "public",
+          "\"public\".\"FaqItem\""
+        ],
+        "expectation": {
+          "expects": "absent",
+          "object": "FK \"FaqItem_settingsId_fkey\" on \"FaqItem\""
+        }
+      }
+    ],
+    "execute": [
+      {
+        "description": "add FK \"FaqItem_settingsId_fkey\"",
+        "sql": "ALTER TABLE \"public\".\"FaqItem\"\nADD CONSTRAINT \"FaqItem_settingsId_fkey\"\nFOREIGN KEY (\"settingsId\")\nREFERENCES \"public\".\"SiteSettings\" (\"id\")\nON DELETE CASCADE"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify FK \"FaqItem_settingsId_fkey\" exists with the planned columns, referenced table and actions",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_constraint\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"connamespace\" WHERE (\"c\".\"conname\" = $1 AND \"n\".\"nspname\" = $2 AND \"c\".\"conrelid\" = to_regclass($3) AND \"c\".\"contype\" = $4 AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"conkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"conrelid\" AND key_attribute.attnum = key_column.attnum) = ($5)::jsonb AND \"c\".\"confrelid\" = to_regclass($6) AND (SELECT coalesce(jsonb_agg(key_attribute.attname ORDER BY key_column.position), '[]'::jsonb) FROM unnest(\"c\".\"confkey\"::int2[]) WITH ORDINALITY AS key_column(attnum, position) JOIN pg_attribute key_attribute ON key_attribute.attrelid = \"c\".\"confrelid\" AND key_attribute.attnum = key_column.attnum) = ($7)::jsonb AND \"c\".\"confdeltype\" = $8 AND \"c\".\"confupdtype\" = $9)) AS \"result\"",
+        "params": [
+          "FaqItem_settingsId_fkey",
+          "public",
+          "\"public\".\"FaqItem\"",
+          "f",
+          "[\"settingsId\"]",
+          "\"public\".\"SiteSettings\"",
+          "[\"id\"]",
+          "c",
+          "a"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.FaqItem",
+    "label": "Enable row-level security on \"FaqItem\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "FaqItem"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"FaqItem\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "FaqItem"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"FaqItem\"",
+        "sql": "ALTER TABLE \"public\".\"FaqItem\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"FaqItem\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "FaqItem"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "rowLevelSecurity.public.SiteSettings",
+    "label": "Enable row-level security on \"SiteSettings\"",
+    "operationClass": "additive",
+    "target": {
+      "id": "postgres",
+      "details": {
+        "schema": "public",
+        "objectType": "rowLevelSecurity",
+        "name": "SiteSettings"
+      }
+    },
+    "precheck": [
+      {
+        "description": "check RLS is not already enabled on \"SiteSettings\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND NOT (\"c\".\"relrowsecurity\"))) AS \"result\"",
+        "params": [
+          "public",
+          "SiteSettings"
+        ]
+      }
+    ],
+    "execute": [
+      {
+        "description": "enable row-level security on \"SiteSettings\"",
+        "sql": "ALTER TABLE \"public\".\"SiteSettings\" ENABLE ROW LEVEL SECURITY"
+      }
+    ],
+    "postcheck": [
+      {
+        "description": "verify row-level security is enabled on \"SiteSettings\"",
+        "sql": "SELECT EXISTS (SELECT 1 AS \"one\" FROM \"pg_class\" AS \"c\" INNER JOIN \"pg_namespace\" AS \"n\" ON \"n\".\"oid\" = \"c\".\"relnamespace\" WHERE (\"n\".\"nspname\" = $1 AND \"c\".\"relname\" = $2 AND \"c\".\"relrowsecurity\")) AS \"result\"",
+        "params": [
+          "public",
+          "SiteSettings"
+        ]
+      }
+    ]
+  }
+]

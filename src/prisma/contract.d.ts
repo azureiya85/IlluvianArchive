@@ -23,9 +23,9 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'602195f67d99e523e775aed0116c687583cc8fd6861fb9638867f05aedb67bb7'>;
+  StorageHashBase<'aa85ed4c56d434b2feb46b57cc00b8b0cc4313160de93f56adfeb847d4b4ed8d'>;
 export type ExecutionHash =
-  ExecutionHashBase<'f79cf81eb83059b66fb400e4b08e3ff8a77b95b57c8945f76546fb7be5292440'>;
+  ExecutionHashBase<'67aa548fb36ce4ce60468c73a6483481956742fcc9364897554f1670ce21c2b0'>;
 export type ProfileHash =
   ProfileHashBase<'3916f444a8a17ad749191acf9e08dad97d1a327b88c2f1d45d12f240296aa8b2'>;
 
@@ -481,6 +481,31 @@ export namespace Models {
     universe: public_Universe;
     readonly [RelationKeys]?: 'books' | 'universe';
   };
+  export type public_FaqItem = {
+    answer: FieldOutputTypes['public']['FaqItem']['answer'];
+    createdAt: FieldOutputTypes['public']['FaqItem']['createdAt'];
+    id: FieldOutputTypes['public']['FaqItem']['id'];
+    orderIndex: FieldOutputTypes['public']['FaqItem']['orderIndex'];
+    question: FieldOutputTypes['public']['FaqItem']['question'];
+    settingsId: FieldOutputTypes['public']['FaqItem']['settingsId'];
+    updatedAt: FieldOutputTypes['public']['FaqItem']['updatedAt'];
+    settings: public_SiteSettings;
+    readonly [RelationKeys]?: 'settings';
+  };
+  export type public_SiteSettings = {
+    aboutContent: FieldOutputTypes['public']['SiteSettings']['aboutContent'];
+    contactEmail: FieldOutputTypes['public']['SiteSettings']['contactEmail'];
+    createdAt: FieldOutputTypes['public']['SiteSettings']['createdAt'];
+    heroBanner: FieldOutputTypes['public']['SiteSettings']['heroBanner'];
+    id: FieldOutputTypes['public']['SiteSettings']['id'];
+    logo: FieldOutputTypes['public']['SiteSettings']['logo'];
+    ownerCoverImage: FieldOutputTypes['public']['SiteSettings']['ownerCoverImage'];
+    ownerName: FieldOutputTypes['public']['SiteSettings']['ownerName'];
+    siteTitle: FieldOutputTypes['public']['SiteSettings']['siteTitle'];
+    updatedAt: FieldOutputTypes['public']['SiteSettings']['updatedAt'];
+    faqs: public_FaqItem[];
+    readonly [RelationKeys]?: 'faqs';
+  };
   export type public_Tag = {
     createdAt: FieldOutputTypes['public']['Tag']['createdAt'];
     id: FieldOutputTypes['public']['Tag']['id'];
@@ -514,6 +539,8 @@ export declare const models: {
     Chapter: Models.public_Chapter;
     Character: Models.public_Character;
     Era: Models.public_Era;
+    FaqItem: Models.public_FaqItem;
+    SiteSettings: Models.public_SiteSettings;
     Tag: Models.public_Tag;
     Universe: Models.public_Universe;
   };
@@ -629,7 +656,7 @@ type ContractBase = Omit<
                   readonly nullable: false;
                   readonly default: {
                     readonly kind: 'literal';
-                    readonly value: DefaultLiteralValue<'pg/text@1', 'Yosef Ryan'>;
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'Ryhze'>;
                   };
                   readonly many: false;
                 };
@@ -1187,6 +1214,168 @@ type ContractBase = Omit<
                 },
               ];
             };
+            readonly FaqItem: {
+              columns: {
+                readonly answer: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly orderIndex: {
+                  readonly dataType: 'pg/float8';
+                  readonly codecId: 'pg/float8@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/float8@1', 0>;
+                  };
+                  readonly many: false;
+                };
+                readonly question: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly many: false;
+                };
+                readonly settingsId: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'global'>;
+                  };
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [
+                {
+                  readonly name: 'FaqItem_settingsId_idx_6654474f';
+                  readonly prefix: 'FaqItem_settingsId_idx';
+                  readonly columns: readonly ['settingsId'];
+                  readonly unique: false;
+                },
+              ];
+              foreignKeys: readonly [
+                {
+                  readonly source: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'FaqItem';
+                    readonly columns: readonly ['settingsId'];
+                  };
+                  readonly target: {
+                    readonly namespaceId: 'public' & NamespaceId;
+                    readonly tableName: 'SiteSettings';
+                    readonly columns: readonly ['id'];
+                  };
+                },
+              ];
+            };
+            readonly SiteSettings: {
+              columns: {
+                readonly aboutContent: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly contactEmail: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly createdAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+                readonly heroBanner: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly id: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'global'>;
+                  };
+                  readonly many: false;
+                };
+                readonly logo: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly ownerCoverImage: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
+                readonly ownerName: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'Ryhze'>;
+                  };
+                  readonly many: false;
+                };
+                readonly siteTitle: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: false;
+                  readonly default: {
+                    readonly kind: 'literal';
+                    readonly value: DefaultLiteralValue<'pg/text@1', 'Illuvian Archive'>;
+                  };
+                  readonly many: false;
+                };
+                readonly updatedAt: {
+                  readonly dataType: 'pg/timestamptz';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly nullable: false;
+                  readonly typeParams: { readonly precision: 3 };
+                  readonly many: false;
+                };
+              };
+              primaryKey: { readonly columns: readonly ['id'] };
+              uniques: readonly [];
+              indexes: readonly [];
+              foreignKeys: readonly [];
+            };
             readonly Tag: {
               columns: {
                 readonly createdAt: {
@@ -1328,6 +1517,11 @@ type ContractBase = Omit<
     readonly Chapter: { readonly namespace: 'public' & NamespaceId; readonly model: 'Chapter' };
     readonly Character: { readonly namespace: 'public' & NamespaceId; readonly model: 'Character' };
     readonly Era: { readonly namespace: 'public' & NamespaceId; readonly model: 'Era' };
+    readonly FaqItem: { readonly namespace: 'public' & NamespaceId; readonly model: 'FaqItem' };
+    readonly SiteSettings: {
+      readonly namespace: 'public' & NamespaceId;
+      readonly model: 'SiteSettings';
+    };
     readonly Tag: { readonly namespace: 'public' & NamespaceId; readonly model: 'Tag' };
     readonly Universe: { readonly namespace: 'public' & NamespaceId; readonly model: 'Universe' };
   };
@@ -1934,6 +2128,154 @@ type ContractBase = Omit<
               };
             };
           };
+          readonly FaqItem: {
+            readonly fields: {
+              readonly answer: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly orderIndex: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/float8@1' };
+              };
+              readonly question: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly settingsId: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+            };
+            readonly relations: {
+              readonly settings: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'SiteSettings';
+                };
+                readonly cardinality: 'N:1';
+                readonly nullable: false;
+                readonly on: {
+                  readonly localFields: readonly ['settingsId'];
+                  readonly targetFields: readonly ['id'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'FaqItem';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly answer: { readonly column: 'answer' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly id: { readonly column: 'id' };
+                readonly orderIndex: { readonly column: 'orderIndex' };
+                readonly question: { readonly column: 'question' };
+                readonly settingsId: { readonly column: 'settingsId' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
+          readonly SiteSettings: {
+            readonly fields: {
+              readonly aboutContent: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly contactEmail: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly createdAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+              readonly heroBanner: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly id: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly logo: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly ownerCoverImage: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly ownerName: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly siteTitle: {
+                readonly nullable: false;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
+              readonly updatedAt: {
+                readonly nullable: false;
+                readonly type: {
+                  readonly kind: 'scalar';
+                  readonly codecId: 'pg/timestamptz-date@1';
+                  readonly typeParams: { readonly precision: 3 };
+                };
+              };
+            };
+            readonly relations: {
+              readonly faqs: {
+                readonly to: {
+                  readonly namespace: 'public' & NamespaceId;
+                  readonly model: 'FaqItem';
+                };
+                readonly cardinality: '1:N';
+                readonly on: {
+                  readonly localFields: readonly ['id'];
+                  readonly targetFields: readonly ['settingsId'];
+                };
+              };
+            };
+            readonly storage: {
+              readonly table: 'SiteSettings';
+              readonly namespaceId: 'public';
+              readonly fields: {
+                readonly aboutContent: { readonly column: 'aboutContent' };
+                readonly contactEmail: { readonly column: 'contactEmail' };
+                readonly createdAt: { readonly column: 'createdAt' };
+                readonly heroBanner: { readonly column: 'heroBanner' };
+                readonly id: { readonly column: 'id' };
+                readonly logo: { readonly column: 'logo' };
+                readonly ownerCoverImage: { readonly column: 'ownerCoverImage' };
+                readonly ownerName: { readonly column: 'ownerName' };
+                readonly siteTitle: { readonly column: 'siteTitle' };
+                readonly updatedAt: { readonly column: 'updatedAt' };
+              };
+            };
+          };
           readonly Tag: {
             readonly fields: {
               readonly createdAt: {
@@ -2343,6 +2685,72 @@ type ContractBase = Omit<
           };
           readonly ref: {
             readonly entry: 'Era';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly ref: {
+            readonly entry: 'FaqItem';
+            readonly field: 'createdAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: { readonly id: 'uuidv4'; readonly kind: 'generator' };
+          readonly ref: {
+            readonly entry: 'FaqItem';
+            readonly field: 'id';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly onUpdate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly ref: {
+            readonly entry: 'FaqItem';
+            readonly field: 'updatedAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly ref: {
+            readonly entry: 'SiteSettings';
+            readonly field: 'createdAt';
+            readonly namespace: 'public';
+          };
+        },
+        {
+          readonly onCreate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly onUpdate: {
+            readonly id: 'timestampNow';
+            readonly kind: 'generator';
+            readonly params: { readonly precision: 3 };
+          };
+          readonly ref: {
+            readonly entry: 'SiteSettings';
             readonly field: 'updatedAt';
             readonly namespace: 'public';
           };

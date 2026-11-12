@@ -179,3 +179,35 @@ model Character {
   updatedAt   temporal.UpdatedAt
   @@rls
 }
+
+model SiteSettings {
+  id           String    @id @default("global")
+  siteTitle    String    @default("Illuvian Archive")
+  aboutContent Text?     // The markdown content for the About page
+  ownerName    String?   @default("Ryhze")
+  ownerCoverImage String?
+  contactEmail String?
+  heroBanner   String?   // URL to the hero banner image
+  logo         String?   // URL to the site logo SVG/PNG
+
+  faqs         FaqItem[] // Relation to the FAQ list
+
+  createdAt    temporal.CreatedAt
+  updatedAt    temporal.UpdatedAt
+  @@rls
+}
+
+model FaqItem {
+  id           String       @id @onCreate(uuid())
+  question     String
+  answer       Text
+  orderIndex   Float        @default(0)
+
+  // Links back to the singleton settings
+  settings     SiteSettings @relation(fields: [settingsId], references: [id], onDelete: Cascade)
+  settingsId   String       @default("global")
+
+  createdAt    temporal.CreatedAt
+  updatedAt    temporal.UpdatedAt
+  @@rls
+}

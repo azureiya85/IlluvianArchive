@@ -32,6 +32,14 @@
       "model": "Era",
       "namespace": "public"
     },
+    "FaqItem": {
+      "model": "FaqItem",
+      "namespace": "public"
+    },
+    "SiteSettings": {
+      "model": "SiteSettings",
+      "namespace": "public"
+    },
     "Tag": {
       "model": "Tag",
       "namespace": "public"
@@ -1113,6 +1121,243 @@
               "table": "Era"
             }
           },
+          "FaqItem": {
+            "fields": {
+              "answer": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "orderIndex": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/float8@1",
+                  "kind": "scalar"
+                }
+              },
+              "question": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "settingsId": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              }
+            },
+            "relations": {
+              "settings": {
+                "cardinality": "N:1",
+                "nullable": false,
+                "on": {
+                  "localFields": [
+                    "settingsId"
+                  ],
+                  "targetFields": [
+                    "id"
+                  ]
+                },
+                "to": {
+                  "model": "SiteSettings",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "answer": {
+                  "column": "answer"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "orderIndex": {
+                  "column": "orderIndex"
+                },
+                "question": {
+                  "column": "question"
+                },
+                "settingsId": {
+                  "column": "settingsId"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "FaqItem"
+            }
+          },
+          "SiteSettings": {
+            "fields": {
+              "aboutContent": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "contactEmail": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "createdAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "heroBanner": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "id": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "logo": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ownerCoverImage": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "ownerName": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "siteTitle": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
+              "updatedAt": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "kind": "scalar",
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              }
+            },
+            "relations": {
+              "faqs": {
+                "cardinality": "1:N",
+                "on": {
+                  "localFields": [
+                    "id"
+                  ],
+                  "targetFields": [
+                    "settingsId"
+                  ]
+                },
+                "to": {
+                  "model": "FaqItem",
+                  "namespace": "public"
+                }
+              }
+            },
+            "storage": {
+              "fields": {
+                "aboutContent": {
+                  "column": "aboutContent"
+                },
+                "contactEmail": {
+                  "column": "contactEmail"
+                },
+                "createdAt": {
+                  "column": "createdAt"
+                },
+                "heroBanner": {
+                  "column": "heroBanner"
+                },
+                "id": {
+                  "column": "id"
+                },
+                "logo": {
+                  "column": "logo"
+                },
+                "ownerCoverImage": {
+                  "column": "ownerCoverImage"
+                },
+                "ownerName": {
+                  "column": "ownerName"
+                },
+                "siteTitle": {
+                  "column": "siteTitle"
+                },
+                "updatedAt": {
+                  "column": "updatedAt"
+                }
+              },
+              "namespaceId": "public",
+              "table": "SiteSettings"
+            }
+          },
           "Tag": {
             "fields": {
               "createdAt": {
@@ -1373,6 +1618,16 @@
               "namespaceId": "public",
               "tableName": "Era"
             },
+            "FaqItem": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "FaqItem"
+            },
+            "SiteSettings": {
+              "kind": "rls",
+              "namespaceId": "public",
+              "tableName": "SiteSettings"
+            },
             "Tag": {
               "kind": "rls",
               "namespaceId": "public",
@@ -1509,7 +1764,7 @@
                   "dataType": "pg/text",
                   "default": {
                     "kind": "literal",
-                    "value": "Yosef Ryan"
+                    "value": "Ryhze"
                   },
                   "nullable": false
                 },
@@ -2213,6 +2468,177 @@
                 }
               ]
             },
+            "FaqItem": {
+              "columns": {
+                "answer": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "orderIndex": {
+                  "codecId": "pg/float8@1",
+                  "dataType": "pg/float8",
+                  "default": {
+                    "kind": "literal",
+                    "value": 0
+                  },
+                  "nullable": false
+                },
+                "question": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": false
+                },
+                "settingsId": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "global"
+                  },
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "foreignKeys": [
+                {
+                  "index": {
+                    "name": "FaqItem_settingsId_idx_6654474f"
+                  },
+                  "onDelete": "cascade",
+                  "source": {
+                    "columns": [
+                      "settingsId"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "FaqItem"
+                  },
+                  "target": {
+                    "columns": [
+                      "id"
+                    ],
+                    "namespaceId": "public",
+                    "tableName": "SiteSettings"
+                  }
+                }
+              ],
+              "indexes": [
+                {
+                  "columns": [
+                    "settingsId"
+                  ],
+                  "name": "FaqItem_settingsId_idx_6654474f",
+                  "prefix": "FaqItem_settingsId_idx",
+                  "unique": false
+                }
+              ],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
+            "SiteSettings": {
+              "columns": {
+                "aboutContent": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "contactEmail": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "createdAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                },
+                "heroBanner": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "id": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "global"
+                  },
+                  "nullable": false
+                },
+                "logo": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "ownerCoverImage": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
+                "ownerName": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "Ryhze"
+                  },
+                  "nullable": true
+                },
+                "siteTitle": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "default": {
+                    "kind": "literal",
+                    "value": "Illuvian Archive"
+                  },
+                  "nullable": false
+                },
+                "updatedAt": {
+                  "codecId": "pg/timestamptz-date@1",
+                  "dataType": "pg/timestamptz",
+                  "nullable": false,
+                  "typeParams": {
+                    "precision": 3
+                  }
+                }
+              },
+              "foreignKeys": [],
+              "indexes": [],
+              "primaryKey": {
+                "columns": [
+                  "id"
+                ]
+              },
+              "uniques": []
+            },
             "Tag": {
               "columns": {
                 "createdAt": {
@@ -2368,10 +2794,10 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "602195f67d99e523e775aed0116c687583cc8fd6861fb9638867f05aedb67bb7"
+    "storageHash": "aa85ed4c56d434b2feb46b57cc00b8b0cc4313160de93f56adfeb847d4b4ed8d"
   },
   "execution": {
-    "executionHash": "f79cf81eb83059b66fb400e4b08e3ff8a77b95b57c8945f76546fb7be5292440",
+    "executionHash": "67aa548fb36ce4ce60468c73a6483481956742fcc9364897554f1670ce21c2b0",
     "mutations": {
       "defaults": [
         {
@@ -2600,6 +3026,87 @@
           },
           "ref": {
             "entry": "Era",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "ref": {
+            "entry": "FaqItem",
+            "field": "createdAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "uuidv4",
+            "kind": "generator"
+          },
+          "ref": {
+            "entry": "FaqItem",
+            "field": "id",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "ref": {
+            "entry": "FaqItem",
+            "field": "updatedAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "ref": {
+            "entry": "SiteSettings",
+            "field": "createdAt",
+            "namespace": "public"
+          }
+        },
+        {
+          "onCreate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "onUpdate": {
+            "id": "timestampNow",
+            "kind": "generator",
+            "params": {
+              "precision": 3
+            }
+          },
+          "ref": {
+            "entry": "SiteSettings",
             "field": "updatedAt",
             "namespace": "public"
           }

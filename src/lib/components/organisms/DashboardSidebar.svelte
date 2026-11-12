@@ -4,6 +4,7 @@
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
 	import GlobeIcon from '@lucide/svelte/icons/globe';
 	import UsersIcon from '@lucide/svelte/icons/users';
+	import SettingsIcon from '@lucide/svelte/icons/settings';
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import HomeIcon from '@lucide/svelte/icons/house';
 
@@ -34,6 +35,10 @@
 				<Navigation.TriggerAnchor href="/admin/dashboard/characters" class={currentPath === '/admin/dashboard/characters' ? 'preset-tonal' : ''}>
 					<UsersIcon class="size-4" />
 					<Navigation.TriggerText>Characters</Navigation.TriggerText>
+				</Navigation.TriggerAnchor>
+				<Navigation.TriggerAnchor href="/admin/dashboard/site" class={currentPath === '/admin/dashboard/site' ? 'preset-tonal' : ''}>
+					<SettingsIcon class="size-4" />
+					<Navigation.TriggerText>Site Data</Navigation.TriggerText>
 				</Navigation.TriggerAnchor>
 			</Navigation.Menu>
 		</Navigation.Group>
