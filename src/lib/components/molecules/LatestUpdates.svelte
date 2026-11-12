@@ -6,6 +6,7 @@
 	import Pagination from '#lib/components/atoms/Pagination.svelte';
 	import SparklesIcon from '@lucide/svelte/icons/sparkles';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
+	import { directImageUrl } from '#lib/utils/image.ts';
 
 	export interface LatestChapter {
 		id: string;
@@ -59,11 +60,11 @@
 							href={resolve('/books/[bookSlug]', { bookSlug: chapter.book.slug })}
 							class="shrink-0 transition-transform duration-200 hover:scale-105"
 						>
-							<img
-								src={chapter.book.coverImage || PLACEHOLDER_IMAGE}
-								alt={chapter.book.title}
-								class="aspect-2/3 w-12 rounded-sm object-cover shadow-sm md:w-14"
-							/>
+						<img
+							src={directImageUrl(chapter.book.coverImage) || PLACEHOLDER_IMAGE}
+							alt={chapter.book.title}
+							class="aspect-2/3 w-12 rounded-sm object-cover shadow-sm md:w-14"
+						/>
 						</a>
 
 						<!-- Titles (Chapter Name & Book Name) -->

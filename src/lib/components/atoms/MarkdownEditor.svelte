@@ -14,6 +14,13 @@
 	import AlignJustifyIcon from '@lucide/svelte/icons/align-justify';
 	import MaximizeIcon from '@lucide/svelte/icons/maximize';
 	import MinimizeIcon from '@lucide/svelte/icons/minimize';
+	import Heading1Icon from '@lucide/svelte/icons/heading-1';
+	import Heading2Icon from '@lucide/svelte/icons/heading-2';
+	import Heading3Icon from '@lucide/svelte/icons/heading-3';
+	import ListIcon from '@lucide/svelte/icons/list';
+	import ListOrderedIcon from '@lucide/svelte/icons/list-ordered';
+	import LinkIcon from '@lucide/svelte/icons/link';
+	import TableIcon from '@lucide/svelte/icons/table';
 
 	interface Props {
 		name: string;
@@ -36,7 +43,7 @@
 	let textareaRef: HTMLTextAreaElement;
 	let isFullscreen = $state(false);
 
-	// Helper to insert markdown/HTML at cursor or wrap selected text
+	// Core formatting helper
 	function applyFormat(prefix: string, suffix: string = '') {
 		if (!textareaRef) return;
 
@@ -50,10 +57,8 @@
 
 		value = before + prefix + selected + suffix + after;
 
-		// Refocus and place cursor correctly after Svelte updates the DOM
 		setTimeout(() => {
 			textareaRef.focus();
-			// If we just inserted a divider, put cursor after it. Otherwise, put it inside/after the wrap.
 			const newCursorPos = selected.length === 0 && suffix === ''
 				? start + prefix.length
 				: start + prefix.length + selected.length;
@@ -65,9 +70,19 @@
 		}, 0);
 	}
 
+	// Insert Table Template
+	function insertTable() {
+		const tableTemplate = `\n\n| Column 1 | Column 2 | Column 3 |\n| :--- | :--- | :--- |\n| Data | Data | Data |\n| Data | Data | Data |\n\n`;
+		applyFormat(tableTemplate, '');
+	}
+
+	// Insert Link Prompt
+	function insertLink() {
+		applyFormat('[', '](https://...)');
+	}
+
 	function toggleFullscreen() {
 		isFullscreen = !isFullscreen;
-		// Prevent body scroll when in fullscreen
 		if (isFullscreen) {
 			document.body.style.overflow = 'hidden';
 		} else {
@@ -81,7 +96,7 @@
 	<!-- Toolbar -->
 	<div class="flex flex-wrap items-center gap-1 border-b border-surface-200-800 bg-surface-50-950 p-2">
 
-		<!-- Formatting -->
+		<!-- Text Styles -->
 		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('**', '**')} title="Bold">
 			<BoldIcon class="size-4" />
 		</Button>
@@ -97,7 +112,26 @@
 
 		<div class="mx-1 h-4 w-px bg-surface-300-700"></div>
 
-		<!-- Block Elements -->
+		<!-- Headings -->
+		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('\n# ', '')} title="Heading 1">
+			<Heading1Icon class="size-4" />
+		</Button>
+		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('\n## ', '')} title="Heading 2">
+			<Heading2Icon class="size-4" />
+		</Button>
+		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('\n### ', '')} title="Heading 3">
+			<Heading3Icon class="size-4" />
+		</Button>
+
+		<div class="mx-1 h-4 w-px bg-surface-300-700"></div>
+
+		<!-- Lists & Blocks -->
+		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('\n- ', '')} title="Unordered List">
+			<ListIcon class="size-4" />
+		</Button>
+		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('\n1. ', '')} title="Ordered List">
+			<ListOrderedIcon class="size-4" />
+		</Button>
 		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('\n> ', '')} title="Blockquote">
 			<QuoteIcon class="size-4" />
 		</Button>
@@ -107,7 +141,17 @@
 
 		<div class="mx-1 h-4 w-px bg-surface-300-700"></div>
 
-		<!-- Alignment (Using inline HTML for markdown compatibility) -->
+		<!-- Media & Tables -->
+		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={insertLink} title="Insert Link">
+			<LinkIcon class="size-4" />
+		</Button>
+		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={insertTable} title="Insert Table">
+			<TableIcon class="size-4" />
+		</Button>
+
+		<div class="mx-1 h-4 w-px bg-surface-300-700"></div>
+
+		<!-- Alignment -->
 		<Button type="button" class="btn-icon btn-icon-sm preset-tonal" onclick={() => applyFormat('\n<div align="left">\n', '\n</div>\n')} title="Align Left">
 			<AlignLeftIcon class="size-4" />
 		</Button>
@@ -125,29 +169,20 @@
 
 		<!-- Typography Adjustments -->
 		<select
-			class="select select-sm w-32 py-1"
+			class="select select-sm w-28 py-1"
 			title="Font Size"
 			onchange={(e) => {
 				const size = (e.target as HTMLSelectElement).value;
 				if(size) applyFormat(`<span style="font-size: ${size}">`, '</span>');
-				(e.target as HTMLSelectElement).value = ""; // reset after applying
+				(e.target as HTMLSelectElement).value = "";
 			}}
 		>
 			<option value="" disabled selected>Size...</option>
 			<option value="0.875rem">Small</option>
 			<option value="1.125rem">Large</option>
-			<option value="1.25rem">Extra Large</option>
+			<option value="1.25rem">X-Large</option>
 			<option value="1.5rem">Huge</option>
 		</select>
-
-		<!--
-		<select class="select select-sm w-32 py-1" title="Font Family">
-			<option value="" disabled selected>Font...</option>
-			<option value="serif">Serif</option>
-			<option value="sans-serif">Sans-Serif</option>
-			<option value="monospace">Monospace</option>
-		</select>
-		-->
 
 		<div class="grow"></div>
 

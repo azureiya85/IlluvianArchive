@@ -3,6 +3,7 @@
 	import Card from '#lib/components/atoms/Card.svelte';
 	import Carousel from '#lib/components/atoms/Carousel.svelte';
 	import StarIcon from '@lucide/svelte/icons/star';
+	import { directImageUrl } from '#lib/utils/image.ts';
 
 	interface FeaturedBook {
 		id: string;
@@ -34,9 +35,9 @@
 					<div class="transition-transform duration-300 group-hover:-translate-y-2 group-hover:scale-105">
 						<!-- Falls back to PLACEHOLDER_IMAGE seamlessly if coverImage is falsy -->
 						<img
-							src={book.coverImage || PLACEHOLDER_IMAGE}
+							src={directImageUrl(book.coverImage) || PLACEHOLDER_IMAGE}
 							alt={book.title}
-							class="aspect-2/3 w-full rounded-container object-cover shadow-md"
+							class="aspect-2/3 w-full object-cover shadow-md"
 						/>
 					</div>
 
