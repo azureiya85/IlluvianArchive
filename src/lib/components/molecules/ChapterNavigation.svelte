@@ -6,10 +6,7 @@
 	import ArrowRightIcon from '@lucide/svelte/icons/arrow-right';
 	import ArrowUpIcon from '@lucide/svelte/icons/arrow-up';
 
-	interface NavChapter {
-		title: string;
-		slug: string;
-	}
+	interface NavChapter { title: string; slug: string; }
 
 	interface Props {
 		bookSlug: string;
@@ -17,7 +14,7 @@
 		nextChapter?: NavChapter | null;
 		hideBackToTop?: boolean;
 
-		// Bindable preferences passed up to Layout
+		fontFamily?: string;
 		fontSize?: string;
 		paragraphSpacing?: string;
 		indentation?: 'author' | 'forced';
@@ -29,6 +26,7 @@
 		prevChapter = null,
 		nextChapter = null,
 		hideBackToTop = false,
+		fontFamily = $bindable(),
 		fontSize = $bindable(),
 		paragraphSpacing = $bindable(),
 		indentation = $bindable(),
@@ -41,15 +39,10 @@
 </script>
 
 <div class="flex flex-col items-center justify-between gap-4 md:flex-row">
+	<!-- Prev Button -->
 	<div class="w-full md:w-1/3">
 	{#if prevChapter}
-		<a
-			href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', {
-				bookSlug,
-				chapterSlug: prevChapter.slug
-			})}
-			class="block"
-		>
+		<a href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', { bookSlug, chapterSlug: prevChapter.slug })} class="block">
 			<Button class="preset-tonal w-full justify-start !rounded-sm md:w-auto">
 				<ArrowLeftIcon class="mr-2 size-4 shrink-0" />
 				<span class="truncate">{prevChapter.title}</span>
@@ -58,10 +51,11 @@
 	{/if}
 	</div>
 
+	<!-- Center -->
 	<div class="flex w-full justify-center md:w-1/3">
 		{#if hideBackToTop}
-			<!-- Bind the popover settings -->
 			<ReaderPopover
+				bind:fontFamily
 				bind:fontSize
 				bind:paragraphSpacing
 				bind:indentation
@@ -74,15 +68,10 @@
 		{/if}
 	</div>
 
+	<!-- Next Button -->
 	<div class="flex w-full justify-end md:w-1/3">
 	{#if nextChapter}
-		<a
-			href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', {
-				bookSlug,
-				chapterSlug: nextChapter.slug
-			})}
-			class="block"
-		>
+		<a href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', { bookSlug, chapterSlug: nextChapter.slug })} class="block">
 			<Button class="preset-filled-primary-500 w-full justify-end !rounded-sm md:w-auto">
 				<span class="truncate max-w-37.5">{nextChapter.title}</span>
 				<ArrowRightIcon class="ml-2 size-4 shrink-0" />

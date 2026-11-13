@@ -25,7 +25,7 @@
 
 	let { chapter, book, arc = null, prevChapter, nextChapter }: Props = $props();
 
-	// Master State for Reader Preferences
+	let fontFamily = $state('"Atkinson Hyperlegible Next Variable", sans-serif');
 	let fontSize = $state('16');
 	let paragraphSpacing = $state('24');
 	let indentation = $state<'author' | 'forced'>('author');
@@ -33,7 +33,6 @@
 </script>
 
 <div class="min-h-screen bg-surface-50-950 pb-20 pt-8 px-4 flex flex-col items-center">
-
 	<div class="w-full max-w-7xl mb-8">
 		<ChapterHeaderCard
 			title={chapter.title}
@@ -47,11 +46,13 @@
 	</div>
 
 	<div class="w-full max-w-5xl mb-8">
+		<!-- Bound fontFamily down to the top navigation -->
 		<ChapterNavigation
 			bookSlug={book.slug}
 			{prevChapter}
 			{nextChapter}
 			hideBackToTop={true}
+			bind:fontFamily
 			bind:fontSize
 			bind:paragraphSpacing
 			bind:indentation
@@ -61,14 +62,11 @@
 
 	<div class="w-full max-w-5xl mb-8">
 		<Card class="preset-filled-surface-100-900 rounded-sm p-6 md:p-10 transition-all duration-300">
-			<!--
-				Apply dynamic inline styles as CSS variables.
-				width: {readerWidth}% dynamically scales the reading column constraint.
-			-->
 			<div
 				class="mx-auto reader-container transition-all duration-300"
 				style="
 					width: {readerWidth}%;
+					--reader-font-family: {fontFamily};
 					--reader-font-size: {fontSize}px;
 					--reader-p-spacing: {paragraphSpacing}px;
 					--reader-indent: {indentation === 'forced' ? '2em' : '0'};
@@ -86,15 +84,14 @@
 			{nextChapter}
 		/>
 	</div>
-
 </div>
 
-<!-- Overrides for Tailwind Typography targeting only the reader container -->
 <style>
 	:global(.reader-container .prose) {
+		font-family: var(--reader-font-family) !important;
 		font-size: var(--reader-font-size) !important;
 		max-width: none !important;
-		transition: font-size 0.2s ease;
+		transition: font-size 0.2s ease, font-family 0.2s ease;
 	}
 
 	:global(.reader-container .prose p) {
@@ -105,12 +102,6 @@
 		transition: margin 0.2s ease, text-indent 0.2s ease;
 	}
 
-	/*
-	 * FORCED INDENT EXCLUSIONS:
-	 * 1. p:first-child -> The absolute first paragraph in the chapter.
-	 * 2. *:not(p) + p  -> Any paragraph immediately following a heading (h1-h6),
-	 *                     horizontal rule (hr), image, or blockquote.
-	 */
 	:global(.reader-container .prose > p:first-child),
 	:global(.reader-container .prose > *:not(p) + p) {
 		text-indent: 0 !important;

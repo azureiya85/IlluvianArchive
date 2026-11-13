@@ -38,7 +38,7 @@
 
 	<Portal>
 		<SkPopover.Positioner class="z-50!">
-			<SkPopover.Content class="card preset-filled-surface-100-900 w-80 p-4 shadow-xl !rounded-sm {className}">
+			<SkPopover.Content class="card preset-filled-surface-100-900 w-80 p-4 shadow-xl rounded-sm {className}">
 
 				{#if title || description}
 					<header class="mb-4 grid grid-cols-[1fr_auto] items-start gap-4">
@@ -52,7 +52,7 @@
 								</SkPopover.Description>
 							{/if}
 						</div>
-						<SkPopover.CloseTrigger class="btn-icon btn-icon-sm hover:preset-tonal !rounded-sm">
+						<SkPopover.CloseTrigger class="btn-icon btn-icon-sm hover:preset-tonal rounded-sm">
 							<XIcon class="size-4" />
 						</SkPopover.CloseTrigger>
 					</header>

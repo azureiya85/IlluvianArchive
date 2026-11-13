@@ -4,6 +4,7 @@
 	import Settings2Icon from '@lucide/svelte/icons/settings-2';
 
 	interface Props {
+		fontFamily?: string;
 		fontSize?: string;
 		paragraphSpacing?: string;
 		indentation?: 'author' | 'forced';
@@ -11,11 +12,23 @@
 	}
 
 	let {
+		fontFamily = $bindable('"Atkinson Hyperlegible Next Variable", sans-serif'),
 		fontSize = $bindable('16'),
 		paragraphSpacing = $bindable('24'),
 		indentation = $bindable('author'),
 		readerWidth = $bindable('100')
 	}: Props = $props();
+
+	// Map the readable names to their actual CSS font-family strings
+	const fontFamilies = [
+		{ label: 'System Sans', value: 'sans-serif' },
+		{ label: 'System Serif', value: 'serif' },
+		{ label: 'Plus Jakarta Sans', value: '"Plus Jakarta Sans Variable", sans-serif' },
+		{ label: 'Atkinson Next', value: '"Atkinson Hyperlegible Next Variable", sans-serif' },
+		{ label: 'Crimson Pro', value: '"Crimson Pro Variable", serif' },
+		{ label: 'Literata', value: '"Literata Variable", serif' },
+		{ label: 'Atkinson Mono', value: '"Atkinson Hyperlegible Mono Variable", monospace' }
+	];
 
 	const fontSizes = Array.from({ length: 23 }, (_, i) => String(10 + i));
 	const widthOptions = ['100', '90', '80', '70', '60'];
@@ -34,36 +47,49 @@
 	{#snippet content()}
 		<div class="flex flex-col gap-4">
 
+			<!-- Font Family -->
+			<label class="flex flex-col gap-1">
+				<span class="text-sm font-bold opacity-75">Typeface</span>
+				<select class="select rounded-sm py-1" bind:value={fontFamily}>
+					{#each fontFamilies as font (font.value)}
+						<option value={font.value}>{font.label}</option>
+					{/each}
+				</select>
+			</label>
+
+			<!-- Font Size -->
 			<label class="flex flex-col gap-1">
 				<span class="text-sm font-bold opacity-75">Font Size (px)</span>
-				<select class="select !rounded-sm py-1" bind:value={fontSize}>
+				<select class="select rounded-sm py-1" bind:value={fontSize}>
 					{#each fontSizes as size (size)}
 						<option value={size}>{size}px</option>
 					{/each}
 				</select>
 			</label>
 
+			<!-- Paragraph Spacing -->
 			<label class="flex flex-col gap-1">
 				<span class="text-sm font-bold opacity-75">Paragraph Spacing (px)</span>
 				<input
 					type="number"
-					class="input !rounded-sm py-1"
+					class="input rounded-sm py-1"
 					min="20" max="60"
 					bind:value={paragraphSpacing}
 				/>
 			</label>
 
+			<!-- Indentation Mode -->
 			<div class="flex flex-col gap-2">
 				<span class="text-sm font-bold opacity-75">Indentation</span>
 				<div class="flex gap-2">
 					<Button
-						class="flex-1 !rounded-sm btn-sm {indentation === 'author' ? 'preset-filled-primary-500' : 'preset-tonal'}"
+						class="flex-1 rounded-sm btn-sm {indentation === 'author' ? 'preset-filled-primary-500' : 'preset-tonal'}"
 						onclick={() => indentation = 'author'}
 					>
 						Author
 					</Button>
 					<Button
-						class="flex-1 !rounded-sm btn-sm {indentation === 'forced' ? 'preset-filled-primary-500' : 'preset-tonal'}"
+						class="flex-1 rounded-sm btn-sm {indentation === 'forced' ? 'preset-filled-primary-500' : 'preset-tonal'}"
 						onclick={() => indentation = 'forced'}
 					>
 						Forced
@@ -71,9 +97,10 @@
 				</div>
 			</div>
 
+			<!-- Reader Width -->
 			<label class="flex flex-col gap-1">
 				<span class="text-sm font-bold opacity-75">Reader Width</span>
-				<select class="select !rounded-sm py-1" bind:value={readerWidth}>
+				<select class="select rounded-sm py-1" bind:value={readerWidth}>
 					{#each widthOptions as width (width)}
 						<option value={width}>{width === '100' ? 'Max (100%)' : `${width}%`}</option>
 					{/each}
