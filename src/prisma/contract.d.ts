@@ -23,7 +23,7 @@ import type {
 } from '@prisma/orm-postgres/contract/types';
 
 export type StorageHash =
-  StorageHashBase<'aa85ed4c56d434b2feb46b57cc00b8b0cc4313160de93f56adfeb847d4b4ed8d'>;
+  StorageHashBase<'e57615b5d6c19869bed01866f3da5f1fa45c017c1953d8e9018bdbde4d8430ec'>;
 export type ExecutionHash =
   ExecutionHashBase<'67aa548fb36ce4ce60468c73a6483481956742fcc9364897554f1670ce21c2b0'>;
 export type ProfileHash =
@@ -469,6 +469,7 @@ export namespace Models {
     readonly [RelationKeys]?: 'books' | 'universe';
   };
   export type public_Era = {
+    coverImage: FieldOutputTypes['public']['Era']['coverImage'];
     createdAt: FieldOutputTypes['public']['Era']['createdAt'];
     description: FieldOutputTypes['public']['Era']['description'];
     id: FieldOutputTypes['public']['Era']['id'];
@@ -1134,6 +1135,12 @@ type ContractBase = Omit<
             };
             readonly Era: {
               columns: {
+                readonly coverImage: {
+                  readonly dataType: 'pg/text';
+                  readonly codecId: 'pg/text@1';
+                  readonly nullable: true;
+                  readonly many: false;
+                };
                 readonly createdAt: {
                   readonly dataType: 'pg/timestamptz';
                   readonly codecId: 'pg/timestamptz-date@1';
@@ -2050,6 +2057,10 @@ type ContractBase = Omit<
           };
           readonly Era: {
             readonly fields: {
+              readonly coverImage: {
+                readonly nullable: true;
+                readonly type: { readonly kind: 'scalar'; readonly codecId: 'pg/text@1' };
+              };
               readonly createdAt: {
                 readonly nullable: false;
                 readonly type: {
@@ -2117,6 +2128,7 @@ type ContractBase = Omit<
               readonly table: 'Era';
               readonly namespaceId: 'public';
               readonly fields: {
+                readonly coverImage: { readonly column: 'coverImage' };
                 readonly createdAt: { readonly column: 'createdAt' };
                 readonly description: { readonly column: 'description' };
                 readonly id: { readonly column: 'id' };

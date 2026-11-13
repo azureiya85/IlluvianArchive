@@ -44,7 +44,8 @@ model Era {
   name        String
   slug        String
   description Text?
-  orderIndex Float @default(0)
+  orderIndex  Float @default(0)
+  coverImage  String?
 
   universe    Universe  @relation(fields: [universeId], references: [id], onDelete: Cascade)
   universeId  String

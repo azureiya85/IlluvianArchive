@@ -994,6 +994,13 @@
           },
           "Era": {
             "fields": {
+              "coverImage": {
+                "nullable": true,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "createdAt": {
                 "nullable": false,
                 "type": {
@@ -1092,6 +1099,9 @@
             },
             "storage": {
               "fields": {
+                "coverImage": {
+                  "column": "coverImage"
+                },
                 "createdAt": {
                   "column": "createdAt"
                 },
@@ -2371,6 +2381,11 @@
             },
             "Era": {
               "columns": {
+                "coverImage": {
+                  "codecId": "pg/text@1",
+                  "dataType": "pg/text",
+                  "nullable": true
+                },
                 "createdAt": {
                   "codecId": "pg/timestamptz-date@1",
                   "dataType": "pg/timestamptz",
@@ -2794,7 +2809,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "aa85ed4c56d434b2feb46b57cc00b8b0cc4313160de93f56adfeb847d4b4ed8d"
+    "storageHash": "e57615b5d6c19869bed01866f3da5f1fa45c017c1953d8e9018bdbde4d8430ec"
   },
   "execution": {
     "executionHash": "67aa548fb36ce4ce60468c73a6483481956742fcc9364897554f1670ce21c2b0",
