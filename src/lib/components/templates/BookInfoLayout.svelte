@@ -15,7 +15,7 @@
 <div class="min-h-screen bg-surface-50-950 pb-20">
 	<TopBar />
 
-	<main class="mx-auto mt-8 max-w-6xl space-y-8 px-4">
+	<main class="mx-auto mt-8 max-w-7xl space-y-8 px-4">
 		<BookInfoHeader {book} />
 		<AboutBook description={book.description} />
 		<TableOfContent bookSlug={book.slug} {chapters} />

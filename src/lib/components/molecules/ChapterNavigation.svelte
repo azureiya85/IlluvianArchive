@@ -43,7 +43,7 @@
 	<div class="w-full md:w-1/3">
 	{#if prevChapter}
 		<a href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', { bookSlug, chapterSlug: prevChapter.slug })} class="block">
-			<Button class="preset-tonal w-full justify-start !rounded-sm md:w-auto">
+			<Button class="preset-tonal w-full justify-start rounded-sm md:w-auto">
 				<ArrowLeftIcon class="mr-2 size-4 shrink-0" />
 				<span class="truncate">{prevChapter.title}</span>
 			</Button>
@@ -62,7 +62,7 @@
 				bind:readerWidth
 			/>
 		{:else}
-			<Button class="btn-icon preset-tonal-surface !rounded-sm" onclick={scrollToTop} title="Back to Top">
+			<Button class="btn-icon preset-tonal-surface rounded-sm" onclick={scrollToTop} title="Back to Top">
 				<ArrowUpIcon class="size-5" />
 			</Button>
 		{/if}
@@ -72,7 +72,7 @@
 	<div class="flex w-full justify-end md:w-1/3">
 	{#if nextChapter}
 		<a href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', { bookSlug, chapterSlug: nextChapter.slug })} class="block">
-			<Button class="preset-filled-primary-500 w-full justify-end !rounded-sm md:w-auto">
+			<Button class="preset-filled-primary-500 w-full justify-end rounded-sm md:w-auto">
 				<span class="truncate max-w-37.5">{nextChapter.title}</span>
 				<ArrowRightIcon class="ml-2 size-4 shrink-0" />
 			</Button>

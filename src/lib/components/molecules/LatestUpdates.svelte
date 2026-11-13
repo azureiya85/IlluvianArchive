@@ -12,6 +12,7 @@
 	import type { LatestChapter } from '#lib/types/landing.ts';
 	import { navigating } from '$app/state';
 	import Loading from '#lib/components/atoms/Loading.svelte';
+	import { page as pageState } from '$app/state';
 
 
 	interface FilterOptions {
@@ -37,25 +38,24 @@
 	const PLACEHOLDER_IMAGE =
 		'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400&h=600';
 
+	function navigate(query: Record<string, string>) {
+		const params = new URLSearchParams(query);
+		goto(resolve(`/?${params.toString()}`), { reset: false });
+	}
+
 	function applyFilters() {
-		const url = new URL(window.location.href);
-		url.searchParams.set('page', '1');
-
-		if (selectedType) url.searchParams.set('type', selectedType);
-		else url.searchParams.delete('type');
-
-		if (selectedBook) url.searchParams.set('book', selectedBook);
-		else url.searchParams.delete('book');
-
-		// Resolve the base path FIRST, then append the search string
-		goto(`${resolve('/')}${url.search}`, { reset: false });
+		navigate({
+			page: '1',
+			...(selectedType ? { type: selectedType } : {}),
+			...(selectedBook ? { book: selectedBook } : {})
+		});
 	}
 
 	function changePage(p: number) {
-		const url = new URL(window.location.href);
-		url.searchParams.set('page', p.toString());
-		// Resolve the base path FIRST, then append the search string
-		goto(`${resolve('/')}${url.search}`, { reset: false });
+		navigate({
+			...Object.fromEntries(pageState.url.searchParams),
+			page: String(p)
+		});
 	}
 </script>
 
