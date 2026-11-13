@@ -16,4 +16,5 @@
 	chapterPage={data.chapterPage}
 	chapterPageSize={data.chapterPageSize}
 	chapterTotal={data.chapterTotal}
+	filters={data.filterOptions}
 />

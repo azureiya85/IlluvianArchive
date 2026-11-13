@@ -1,10 +1,16 @@
 import { db } from '#lib/server/db.ts';
 import type { PageServerLoad } from './$types';
+import { availableStoryTypes } from '#lib/utils/Filter.ts';
 
 const PAGE_SIZE = 10;
 
 export const load: PageServerLoad = async ({ url }) => {
 	const page = Math.max(1, Number(url.searchParams.get('page')) || 1);
+
+	// Extract filters from URL
+	const typeParam = url.searchParams.get('type') ?? '';
+  const filterType = availableStoryTypes.find((t) => t.value === typeParam)?.value ?? '';
+	const filterBook = url.searchParams.get('book') || '';
 
 	// 1. Fetch published books with their tags
 	const books = await db.orm.public.Book
@@ -27,11 +33,19 @@ export const load: PageServerLoad = async ({ url }) => {
 	otherBooks.sort(() => 0.5 - Math.random());
 	const featuredBooks = [...favoriteBooks, ...otherBooks].slice(0, 5);
 
-	// 5. Published chapters whose parent book is also published.
-	// Chained where() calls are ANDed; the relation filter checks the parent book.
-	const publishedChapters = db.orm.public.Chapter
+	// 5. Published chapters whose parent book is also published
+	let publishedChapters = db.orm.public.Chapter
 		.where({ status: 'PUBLISHED' })
 		.where((c) => c.book.some({ status: 'PUBLISHED' }));
+
+	// Apply optional filters using Prisma 8 chained wheres
+	if (filterType) {
+		publishedChapters = publishedChapters.where((c) => c.book.some({ type: filterType }));
+	}
+
+	if (filterBook) {
+		publishedChapters = publishedChapters.where((c) => c.book.some({ slug: filterBook }));
+	}
 
 	const [{ total: chapterTotal }, chapters] = await Promise.all([
 		publishedChapters.aggregate((agg) => ({ total: agg.count() })),
@@ -50,6 +64,14 @@ export const load: PageServerLoad = async ({ url }) => {
 			slug: b.slug,
 			coverImage: b.coverImage
 		})),
+
+		// Pass down the filter options so the UI can populate the dropdowns
+		filterOptions: {
+			books: books.map(b => ({ title: b.title, slug: b.slug })),
+			currentType: filterType,
+			currentBook: filterBook
+		},
+
 		latestChapters: chapters.map((c) => ({
 			id: c.id,
 			title: c.title,

@@ -86,7 +86,7 @@
 						class="flex-1 rounded-sm btn-sm {indentation === 'author' ? 'preset-filled-primary-500' : 'preset-tonal'}"
 						onclick={() => indentation = 'author'}
 					>
-						Author
+						Default
 					</Button>
 					<Button
 						class="flex-1 rounded-sm btn-sm {indentation === 'forced' ? 'preset-filled-primary-500' : 'preset-tonal'}"
