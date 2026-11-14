@@ -1,23 +1,9 @@
 <script lang="ts">
 	import Tabs from '#lib/components/atoms/Tabs.svelte';
 	import ManageChapter from '#lib/components/molecules/ManageChapter.svelte';
-	import ChapterForm from '#lib/components/molecules/ChapterForm.svelte';
+	import ChapterForm, { type Chapter } from '#lib/components/molecules/ChapterForm.svelte';
 	import ManageArc from '#lib/components/molecules/ManageArc.svelte';
 	import ArcForm from '#lib/components/molecules/ArcForm.svelte';
-
-	interface Chapter {
-		id: string;
-		title: string;
-		slug: string;
-		summary?: string | null;
-		content: string;
-		orderIndex: number;
-		status: string;
-		wordCount: number;
-		publishedAt?: Date | null;
-		bookId: string;
-		arcId?: string | null;
-	}
 
 	interface Arc {
 		id: string;
@@ -29,7 +15,7 @@
 		bookId: string;
 	}
 
-	interface Book { id: string; title: string; slug: string; }
+	interface Book { id: string; title: string; slug: string; type: string; }
 
 	interface Props {
 		chapters?: Chapter[];
@@ -71,7 +57,7 @@
 
 		{ value: 'manage-arc', label: 'Manage Arcs', content: manageArcContent },
 		{ value: 'create-arc', label: 'Create Arc', content: createArcContent },
-		...(activeTab === 'edit-arc' && editingArc ? [{ value: 'edit-arc', label: 'Edit Arc', content: editArcContent }] : []),
+		...(activeTab === 'edit-arc' && editingArc ? [{ value: 'edit-arc', label: 'Edit Arc', content: editArcContent }] : [])
 	]);
 </script>
 

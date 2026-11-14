@@ -5,3 +5,10 @@
 @import '@skeletonlabs/skeleton/themes/rosepine';
 @plugin '@tailwindcss/forms';
 @plugin '@tailwindcss/typography';
+@import '@fontsource-variable/clarity-city';
+@import '@fontsource-variable/space-grotesk';
+
+[data-theme='rosepine'] {
+	--typo-base--font-family: 'Clarity City Variable', sans-serif;
+	--typo-heading--font-family: 'Space Grotesk Variable', sans-serif;
+}

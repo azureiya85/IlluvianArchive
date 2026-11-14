@@ -20,14 +20,34 @@
 	}: Props = $props();
 
 	// Map the readable names to their actual CSS font-family strings
-	const fontFamilies = [
-		{ label: 'System Sans', value: 'sans-serif' },
-		{ label: 'System Serif', value: 'serif' },
-		{ label: 'Plus Jakarta Sans', value: '"Plus Jakarta Sans Variable", sans-serif' },
-		{ label: 'Atkinson Next', value: '"Atkinson Hyperlegible Next Variable", sans-serif' },
-		{ label: 'Crimson Pro', value: '"Crimson Pro Variable", serif' },
-		{ label: 'Literata', value: '"Literata Variable", serif' },
-		{ label: 'Atkinson Mono', value: '"Atkinson Hyperlegible Mono Variable", monospace' }
+	const fontGroups = [
+		{
+			label: 'Sans-Serif',
+			fonts: [
+				{ label: 'System Sans', value: 'sans-serif' },
+				{ label: 'Atkinson Next', value: '"Atkinson Hyperlegible Next Variable", sans-serif' },
+				{ label: 'Valley Sans', value: '"Valley Sans Variable", sans-serif' },
+				{ label: 'Space Grotesk', value: '"Space Grotesk Variable", sans-serif' },
+				{ label: 'Clarity City', value: '"Clarity CIty Variable", sans-serif' }
+			]
+		},
+		{
+			label: 'Serif',
+			fonts: [
+				{ label: 'System Serif', value: 'serif' },
+				{ label: 'Literata', value: '"Literata Variable", serif' },
+				{ label: 'Newsreader', value: '"Newsreader Variable", serif' },
+				{ label: 'Crimson Pro', value: '"Crimson Pro Variable", serif' },
+				{ label: 'IBM Plex Serif', value: '"IBM Plex Serif", serif' }
+			]
+		},
+		{
+			label: 'Monospace',
+			fonts: [
+				{ label: 'System Mono', value: 'monospace' },
+				{ label: 'Atkinson Mono', value: '"Atkinson Hyperlegible Mono Variable", monospace' }
+			]
+		}
 	];
 
 	const fontSizes = Array.from({ length: 23 }, (_, i) => String(10 + i));
@@ -51,8 +71,12 @@
 			<label class="flex flex-col gap-1">
 				<span class="text-sm font-bold opacity-75">Typeface</span>
 				<select class="select rounded-sm py-1" bind:value={fontFamily}>
-					{#each fontFamilies as font (font.value)}
-						<option value={font.value}>{font.label}</option>
+					{#each fontGroups as group (group.label)}
+						<optgroup label={group.label}>
+							{#each group.fonts as font (font.value)}
+								<option value={font.value}>{font.label}</option>
+							{/each}
+						</optgroup>
 					{/each}
 				</select>
 			</label>

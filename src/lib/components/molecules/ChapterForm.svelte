@@ -1,11 +1,5 @@
-<script lang="ts">
-	import { untrack } from 'svelte';
-	import Form from '#lib/components/atoms/Form.svelte';
-	import Card from '#lib/components/atoms/Card.svelte';
-	import Button from '#lib/components/atoms/Button.svelte';
-	import MarkdownEditor from '#lib/components/atoms/MarkdownEditor.svelte';
-
-	interface Chapter {
+<script lang="ts" module>
+	export interface Chapter {
 		id: string;
 		title: string;
 		slug: string;
@@ -14,10 +8,18 @@
 		orderIndex: number;
 		status: string;
 		wordCount: number;
-		publishedAt?: Date | null;
+		publishedAt?: Date | string | null;
 		bookId: string;
 		arcId?: string | null;
 	}
+</script>
+
+<script lang="ts">
+	import { untrack } from 'svelte';
+	import Form from '#lib/components/atoms/Form.svelte';
+	import Card from '#lib/components/atoms/Card.svelte';
+	import Button from '#lib/components/atoms/Button.svelte';
+	import MarkdownEditor from '#lib/components/atoms/MarkdownEditor.svelte';
 
 	interface Book { id: string; title: string; }
 	interface Arc { id: string; title: string; bookId: string; }
@@ -45,11 +47,10 @@
 			: ''
 	);
 
-	// We bind the content state here so the editor can control it
 	let chapterContent = $state(untrack(() => chapter?.content ?? ''));
 </script>
 
-<Card class="preset-filled-surface-100-900 mx-auto max-w-5xl p-6">
+<Card class="preset-filled-surface-100-900 mx-auto max-w-5xl p-6 !rounded-sm">
 	<Form method="POST" {action} class="space-y-6" submitEnhance={() => {
 		loading = true;
 		return async ({ update }) => {
@@ -59,9 +60,9 @@
 		};
 	}}>
 		<div class="flex items-center justify-between">
-			<h2 class="h3">{formTitle}</h2>
+			<h2 class="h3 font-bold">{formTitle}</h2>
 			{#if onCancel}
-				<Button class="btn-sm preset-outlined" type="button" onclick={onCancel}>Cancel</Button>
+				<Button class="btn-sm preset-outlined !rounded-sm" type="button" onclick={onCancel}>Cancel</Button>
 			{/if}
 		</div>
 
@@ -74,17 +75,17 @@
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 				<label class="label md:col-span-2">
 					<span class="label-text">Title</span>
-					<input class="input" type="text" name="title" value={chapter?.title ?? ''} required placeholder="Chapter 1: The Beginning" />
+					<input class="input !rounded-sm" type="text" name="title" value={chapter?.title ?? ''} required placeholder="Chapter 1: The Beginning" />
 				</label>
 				<label class="label">
 					<span class="label-text">Order Index</span>
-					<input class="input" type="number" step="0.1" name="orderIndex" value={chapter?.orderIndex ?? 0} required />
+					<input class="input !rounded-sm" type="number" step="0.1" name="orderIndex" value={chapter?.orderIndex ?? 0} required />
 				</label>
 			</div>
 
 			<label class="label">
 				<span class="label-text">Slug</span>
-				<input class="input" type="text" name="slug" value={chapter?.slug ?? ''} required placeholder="chapter-1" />
+				<input class="input !rounded-sm" type="text" name="slug" value={chapter?.slug ?? ''} required placeholder="chapter-1" />
 			</label>
 		</fieldset>
 
@@ -93,7 +94,7 @@
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-2">
 				<label class="label">
 					<span class="label-text">Book</span>
-					<select class="select" name="bookId" bind:value={selectedBookId} required>
+					<select class="select !rounded-sm" name="bookId" bind:value={selectedBookId} required>
 						<option value="" disabled>Select Book</option>
 						{#each books as book (book.id)}
 							<option value={book.id}>{book.title}</option>
@@ -102,7 +103,7 @@
 				</label>
 				<label class="label">
 					<span class="label-text">Arc (Optional)</span>
-					<select class="select" name="arcId" value={chapter?.arcId ?? ''} disabled={!selectedBookId}>
+					<select class="select !rounded-sm" name="arcId" value={chapter?.arcId ?? ''} disabled={!selectedBookId}>
 						<option value="">None / Outside Arc</option>
 						{#each availableArcs as arc (arc.id)}
 							<option value={arc.id}>{arc.title}</option>
@@ -116,10 +117,9 @@
 			<legend class="legend">Content</legend>
 			<label class="label">
 				<span class="label-text">Summary (Optional)</span>
-				<textarea class="textarea" name="summary" rows="2" placeholder="Brief chapter recap...">{chapter?.summary ?? ''}</textarea>
+				<textarea class="textarea !rounded-sm" name="summary" rows="2" placeholder="Brief chapter recap...">{chapter?.summary ?? ''}</textarea>
 			</label>
 
-			<!-- The new Markdown Editor implementation -->
 			<div class="space-y-1">
 				<span class="label-text">Chapter Content</span>
 				<MarkdownEditor
@@ -136,7 +136,7 @@
 			<div class="grid grid-cols-1 gap-4 md:grid-cols-3">
 				<label class="label">
 					<span class="label-text">Status</span>
-					<select class="select" name="status" value={chapter?.status ?? 'DRAFT'} required>
+					<select class="select !rounded-sm" name="status" value={chapter?.status ?? 'DRAFT'} required>
 						<option value="DRAFT">Draft</option>
 						<option value="PUBLISHED">Published</option>
 						<option value="ARCHIVED">Archived</option>
@@ -144,20 +144,20 @@
 				</label>
 				<label class="label">
 					<span class="label-text">Publish Date</span>
-					<input class="input" type="datetime-local" name="publishedAt" value={formattedPublishedAt} />
+					<input class="input !rounded-sm" type="datetime-local" name="publishedAt" value={formattedPublishedAt} />
 				</label>
 				<label class="label">
 					<span class="label-text">Word Count</span>
-					<input class="input" type="number" name="wordCount" value={chapter?.wordCount ?? 0} />
+					<input class="input !rounded-sm" type="number" name="wordCount" value={chapter?.wordCount ?? 0} />
 				</label>
 			</div>
 		</fieldset>
 
 		<div class="flex justify-end gap-4 pt-4">
 			{#if !chapter}
-				<Button class="preset-tonal" type="reset">Reset</Button>
+				<Button class="preset-tonal !rounded-sm" type="reset">Reset</Button>
 			{/if}
-			<Button class="preset-filled-primary-500" disabled={loading}>
+			<Button class="preset-filled-primary-500 !rounded-sm" disabled={loading}>
 				{loading ? 'Saving...' : (chapter ? 'Save Changes' : 'Create Chapter')}
 			</Button>
 		</div>
