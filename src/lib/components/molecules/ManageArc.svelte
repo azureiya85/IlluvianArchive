@@ -4,10 +4,11 @@
 	import Badge from '#lib/components/atoms/Badge.svelte';
 	import DeleteDialog from '#lib/components/atoms/DeleteDialog.svelte';
 	import Pagination from '#lib/components/atoms/Pagination.svelte';
+	import SearchField from '#lib/components/atoms/SearchField.svelte';
+	import SortField, { type SortOption } from '#lib/components/atoms/SortField.svelte';
+	import FilterField from '#lib/components/atoms/FilterField.svelte';
 	import EditIcon from '@lucide/svelte/icons/pencil';
-	import SearchIcon from '@lucide/svelte/icons/search';
 	import FilterIcon from '@lucide/svelte/icons/list-filter';
-	import ArrowUpDownIcon from '@lucide/svelte/icons/arrow-up-down';
 	import RotateCcwIcon from '@lucide/svelte/icons/rotate-ccw';
 	import type { Arc } from '#lib/components/molecules/ArcForm.svelte';
 	import { filterAndSortArcs, type ArcSortOption } from '#lib/utils/Filter.ts';
@@ -26,6 +27,17 @@
 	let searchQuery = $state('');
 	let selectedBookId = $state('');
 	let sortBy = $state<ArcSortOption>('order-asc');
+
+	const sortOptions: SortOption<ArcSortOption>[] = [
+		{ value: 'order-asc', label: 'Order (Low to High)' },
+		{ value: 'order-desc', label: 'Order (High to Low)' },
+		{ value: 'title-asc', label: 'Title (A - Z)' },
+		{ value: 'title-desc', label: 'Title (Z - A)' }
+	];
+
+	let bookFilterOptions = $derived(
+		books.map((b) => ({ value: b.id, label: b.title }))
+	);
 
 	let filteredArcs = $derived(
 		filterAndSortArcs(arcs, books, {
@@ -61,31 +73,18 @@
 	);
 </script>
 
-<Card class="preset-filled-surface-100-900 overflow-hidden rounded-sm">
+<Card class="overflow-hidden preset-filled-surface-100-900 !rounded-sm">
 	<!-- Filter & Search Controls Bar -->
 	<div class="space-y-4 border-b border-surface-200-800 bg-surface-50-950 p-4">
 		<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-			<!-- Search Bar -->
-			<div class="relative flex-1">
-				<SearchIcon class="absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
-				<input
-					type="text"
-					class="input pl-9 rounded-sm bg-surface-100-900 text-sm"
-					placeholder="Search arc title, slug, or book..."
-					bind:value={searchQuery}
-				/>
-			</div>
-
-			<!-- Sort By -->
-			<div class="flex items-center gap-2">
-				<ArrowUpDownIcon class="size-4 shrink-0 opacity-50" />
-				<select class="select rounded-sm bg-surface-100-900 text-sm" bind:value={sortBy}>
-					<option value="order-asc">Order (Low to High)</option>
-					<option value="order-desc">Order (High to Low)</option>
-					<option value="title-asc">Title (A - Z)</option>
-					<option value="title-desc">Title (Z - A)</option>
-				</select>
-			</div>
+			<SearchField
+				bind:value={searchQuery}
+				placeholder="Search arc title, slug, or book..."
+			/>
+			<SortField
+				bind:value={sortBy}
+				options={sortOptions}
+			/>
 		</div>
 
 		<!-- Filter by Book -->
@@ -95,16 +94,15 @@
 				<span>Filter:</span>
 			</div>
 
-			<select class="select rounded-sm bg-surface-100-900 py-1 text-xs" bind:value={selectedBookId}>
-				<option value="">All Books</option>
-				{#each books as b (b.id)}
-					<option value={b.id}>{b.title}</option>
-				{/each}
-			</select>
+			<FilterField
+				bind:value={selectedBookId}
+				options={bookFilterOptions}
+				placeholder="All Books"
+			/>
 
 			{#if hasActiveFilters}
 				<Button
-					class="btn-sm preset-tonal-error rounded-sm flex items-center gap-1 text-xs"
+					class="btn-sm flex items-center gap-1 text-xs preset-tonal-error !rounded-sm"
 					onclick={resetFilters}
 					title="Reset Filters"
 				>
@@ -139,11 +137,11 @@
 							<div class="text-xs opacity-60">{arc.slug}</div>
 						</td>
 						<td class="p-3">
-							<Badge class="preset-tonal-secondary rounded-sm">{getBookTitle(arc.bookId)}</Badge>
+							<Badge class="preset-tonal-secondary !rounded-sm">{getBookTitle(arc.bookId)}</Badge>
 						</td>
 						<td class="p-3 text-right">
 							<div class="flex justify-end gap-2">
-								<Button class="btn-icon btn-icon-sm preset-filled-primary-500 rounded-sm" onclick={() => onEdit(arc)} title="Edit">
+								<Button class="btn-icon btn-icon-sm preset-filled-primary-500 !rounded-sm" onclick={() => onEdit(arc)} title="Edit">
 									<EditIcon class="size-4" />
 								</Button>
 								<DeleteDialog action="?/deleteArc" id={arc.id} />

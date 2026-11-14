@@ -4,16 +4,15 @@
 	import Card from '#lib/components/atoms/Card.svelte';
 	import Badge from '#lib/components/atoms/Badge.svelte';
 	import Pagination from '#lib/components/atoms/Pagination.svelte';
+	import FilterField, { type FilterOption } from '#lib/components/atoms/FilterField.svelte';
 	import SparklesIcon from '@lucide/svelte/icons/sparkles';
 	import BookOpenIcon from '@lucide/svelte/icons/book-open';
 	import FilterIcon from '@lucide/svelte/icons/list-filter';
 	import { directImageUrl } from '#lib/utils/image.ts';
 	import { availableStoryTypes, formatStoryType } from '#lib/utils/Filter.ts';
 	import type { LatestChapter } from '#lib/types/landing.ts';
-	import { navigating } from '$app/state';
+	import { navigating, page as pageState } from '$app/state';
 	import Loading from '#lib/components/atoms/Loading.svelte';
-	import { page as pageState } from '$app/state';
-
 
 	interface FilterOptions {
 		books: { title: string; slug: string }[];
@@ -31,9 +30,19 @@
 
 	let { chapters, page, pageSize, total, filters }: Props = $props();
 
-	let selectedType = $derived(filters.currentType);
-	let selectedBook = $derived(filters.currentBook);
+	let selectedType = $state('');
+	let selectedBook = $state('');
 	let isLoading = $derived(navigating.to?.route.id === '/');
+
+	// Responsively sync local bound state whenever props change
+	$effect(() => {
+		selectedType = filters.currentType;
+		selectedBook = filters.currentBook;
+	});
+
+	let bookFilterOptions = $derived<FilterOption[]>(
+		filters.books.map((b) => ({ value: b.slug, label: b.title }))
+	);
 
 	const PLACEHOLDER_IMAGE =
 		'https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=400&h=600';
@@ -72,29 +81,19 @@
 		</div>
 
 		<div class="flex flex-1 flex-col gap-3 sm:flex-row">
-			<select
-				class="select rounded-sm bg-surface-100-900 py-1 text-sm font-medium"
+			<FilterField
 				bind:value={selectedType}
+				options={availableStoryTypes}
+				placeholder="All Story Types"
 				onchange={applyFilters}
-			>
-				<option value="">All Story Types</option>
-				<!-- Added Key (type.value) -->
-				{#each availableStoryTypes as type (type.value)}
-					<option value={type.value}>{type.label}</option>
-				{/each}
-			</select>
+			/>
 
-			<select
-				class="select rounded-sm bg-surface-100-900 py-1 text-sm font-medium"
+			<FilterField
 				bind:value={selectedBook}
+				options={bookFilterOptions}
+				placeholder="All Books"
 				onchange={applyFilters}
-			>
-				<option value="">All Books</option>
-				<!-- Added Key (book.slug) -->
-				{#each filters.books as book (book.slug)}
-					<option value={book.slug}>{book.title}</option>
-				{/each}
-			</select>
+			/>
 		</div>
 	</div>
 
@@ -105,41 +104,64 @@
 
 		<div class:opacity-50={isLoading} class="transition-opacity duration-150">
 			{#if chapters.length > 0}
-			<div class="divide-surface-200-800 divide-y">
-				{#each chapters as chapter (chapter.id)}
-					<div class="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
-						<a href={resolve('/books/[bookSlug]', { bookSlug: chapter.book.slug })} class="shrink-0 transition-transform duration-200 hover:scale-105">
-							<img src={directImageUrl(chapter.book.coverImage) || PLACEHOLDER_IMAGE} alt={chapter.book.title} class="aspect-2/3 w-12 rounded-none object-cover shadow-sm md:w-14" />
-						</a>
+				<div class="divide-y divide-surface-200-800">
+					{#each chapters as chapter (chapter.id)}
+						<div class="flex items-center gap-4 py-4 first:pt-0 last:pb-0">
+							<a
+								href={resolve('/books/[bookSlug]', { bookSlug: chapter.book.slug })}
+								class="shrink-0 transition-transform duration-200 hover:scale-105"
+							>
+								<img
+									src={directImageUrl(chapter.book.coverImage) || PLACEHOLDER_IMAGE}
+									alt={chapter.book.title}
+									class="aspect-2/3 w-12 rounded-none object-cover shadow-sm md:w-14"
+								/>
+							</a>
 
-						<div class="flex min-w-0 flex-1 flex-col justify-center gap-1">
-							<a href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', { bookSlug: chapter.book.slug, chapterSlug: chapter.slug })} class="truncate text-lg font-extrabold transition-colors duration-200 hover:text-primary-500 md:text-xl">
-								{chapter.title}
-							</a>
-							<a href={resolve('/books/[bookSlug]', { bookSlug: chapter.book.slug })} class="truncate text-sm font-medium opacity-80 transition-colors duration-200 hover:text-primary-500 md:text-base">
-								{chapter.book.title}
-							</a>
+							<div class="flex min-w-0 flex-1 flex-col justify-center gap-1">
+								<a
+									href={resolve('/books/[bookSlug]/chapters/[chapterSlug]', {
+										bookSlug: chapter.book.slug,
+										chapterSlug: chapter.slug
+									})}
+									class="truncate text-lg font-extrabold transition-colors duration-200 hover:text-primary-500 md:text-xl"
+								>
+									{chapter.title}
+								</a>
+								<a
+									href={resolve('/books/[bookSlug]', { bookSlug: chapter.book.slug })}
+									class="truncate text-sm font-medium opacity-80 transition-colors duration-200 hover:text-primary-500 md:text-base"
+								>
+									{chapter.book.title}
+								</a>
+							</div>
+
+							<Badge class="preset-tonal-secondary ml-auto shrink-0 text-xs uppercase tracking-wider rounded-sm">
+								{formatStoryType(chapter.book.type)}
+							</Badge>
 						</div>
+					{/each}
+				</div>
 
-						<Badge class="preset-tonal-secondary ml-auto shrink-0 rounded-sm text-xs uppercase tracking-wider">
-							{formatStoryType(chapter.book.type)}
-						</Badge>
-					</div>
-				{/each}
-			</div>
-
-			{#if total > pageSize}
-				<Pagination count={total} {pageSize} {page} onPageChange={changePage} class="mt-6 border-t border-surface-200-800 pt-4" />
+				{#if total > pageSize}
+					<Pagination count={total} {pageSize} {page} onPageChange={changePage} class="mt-6 border-t border-surface-200-800 pt-4" />
+				{/if}
+			{:else}
+				<div class="flex flex-col items-center justify-center py-8 text-center opacity-60">
+					<BookOpenIcon class="mb-2 size-10" />
+					<p class="font-medium">No chapters found for these filters.</p>
+					<button
+						class="mt-2 text-sm text-primary-500 hover:underline"
+						onclick={() => {
+							selectedType = '';
+							selectedBook = '';
+							applyFilters();
+						}}
+					>
+						Clear filters
+					</button>
+				</div>
 			{/if}
-		{:else}
-			<div class="flex flex-col items-center justify-center py-8 text-center opacity-60">
-				<BookOpenIcon class="mb-2 size-10" />
-				<p class="font-medium">No chapters found for these filters.</p>
-				<button class="mt-2 text-sm text-primary-500 hover:underline" onclick={() => { selectedType = ''; selectedBook = ''; applyFilters(); }}>
-					Clear filters
-				</button>
-			</div>
-		{/if}
-	</div>
+		</div>
 	</div>
 </Card>

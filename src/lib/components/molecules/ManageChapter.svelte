@@ -5,27 +5,16 @@
 	import Badge from '#lib/components/atoms/Badge.svelte';
 	import DeleteDialog from '#lib/components/atoms/DeleteDialog.svelte';
 	import Pagination from '#lib/components/atoms/Pagination.svelte';
+	import SearchField from '#lib/components/atoms/SearchField.svelte';
+	import SortField, { type SortOption as SortFieldOption } from '#lib/components/atoms/SortField.svelte';
+	import FilterField, { type FilterOption } from '#lib/components/atoms/FilterField.svelte';
 	import EditIcon from '@lucide/svelte/icons/pencil';
 	import EyeIcon from '@lucide/svelte/icons/eye';
-	import SearchIcon from '@lucide/svelte/icons/search';
 	import FilterIcon from '@lucide/svelte/icons/list-filter';
-	import ArrowUpDownIcon from '@lucide/svelte/icons/arrow-up-down';
 	import RotateCcwIcon from '@lucide/svelte/icons/rotate-ccw';
+	import type { Chapter } from '#lib/components/molecules/ChapterForm.svelte';
 	import { availableStoryTypes, filterAndSortChapters, type SortOption } from '#lib/utils/Filter.ts';
 
-	interface Chapter {
-		id: string;
-		title: string;
-		slug: string;
-		summary?: string | null;
-		content: string;
-		orderIndex: number;
-		status: string;
-		wordCount: number;
-		publishedAt?: Date | string | null;
-		bookId: string;
-		arcId?: string | null;
-	}
 	interface Book { id: string; title: string; slug: string; type: string; }
 	interface Arc { id: string; title: string; bookId?: string; }
 
@@ -38,7 +27,7 @@
 
 	let { chapters, books, arcs, onEdit }: Props = $props();
 
-	// Filter and Search State
+	// Filter & Search State
 	let searchQuery = $state('');
 	let selectedStoryType = $state('');
 	let selectedBookId = $state('');
@@ -46,12 +35,33 @@
 	let selectedStatus = $state('');
 	let sortBy = $state<SortOption>('order-asc');
 
-	// Available arcs reactively filtered if a specific book is selected
+	const sortOptions: SortFieldOption<SortOption>[] = [
+		{ value: 'order-asc', label: 'Order (Low to High)' },
+		{ value: 'order-desc', label: 'Order (High to Low)' },
+		{ value: 'date-desc', label: 'Published (Newest First)' },
+		{ value: 'date-asc', label: 'Published (Oldest First)' },
+		{ value: 'title-asc', label: 'Title (A - Z)' },
+		{ value: 'title-desc', label: 'Title (Z - A)' }
+	];
+
+	const statusOptions: FilterOption[] = [
+		{ value: 'DRAFT', label: 'Draft' },
+		{ value: 'PUBLISHED', label: 'Published' },
+		{ value: 'ARCHIVED', label: 'Archived' }
+	];
+
 	let availableArcs = $derived(
 		selectedBookId ? arcs.filter((a) => a.bookId === selectedBookId) : arcs
 	);
 
-	// Dynamically filtered and sorted chapters list
+	let bookFilterOptions = $derived<FilterOption[]>(
+		books.map((b) => ({ value: b.id, label: b.title }))
+	);
+
+	let arcFilterOptions = $derived<FilterOption[]>(
+		availableArcs.map((a) => ({ value: a.id, label: a.title }))
+	);
+
 	let filteredChapters = $derived(
 		filterAndSortChapters(chapters, books, arcs, {
 			searchQuery,
@@ -84,91 +94,65 @@
 	let page = $state(1);
 	const PAGE_SIZE = 10;
 
-	// Reset pagination to page 1 whenever search or filter options change
-		$effect(() => {
-			// Evaluate dependencies in an array to register reactive reads for Svelte 5 and pass ESLint
-			const _deps = [searchQuery, selectedStoryType, selectedBookId, selectedArcId, selectedStatus, sortBy];
-			if (_deps) page = 1;
-		});
+	$effect(() => {
+		const _deps = [searchQuery, selectedStoryType, selectedBookId, selectedArcId, selectedStatus, sortBy];
+		if (_deps) page = 1;
+	});
 
 	let paginatedChapters = $derived(
 		filteredChapters.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)
 	);
 </script>
 
-<Card class="preset-filled-surface-100-900 overflow-hidden rounded-sm">
+<Card class="overflow-hidden preset-filled-surface-100-900 !rounded-sm">
 	<!-- Filter & Search Controls Bar -->
 	<div class="space-y-4 border-b border-surface-200-800 bg-surface-50-950 p-4">
-		<!-- Top Row: Search and Sort -->
+		<!-- Search and Sort -->
 		<div class="flex flex-col gap-3 sm:flex-row sm:items-center">
-			<!-- Search Bar -->
-			<div class="relative flex-1">
-				<SearchIcon class="absolute left-3 top-1/2 size-4 -translate-y-1/2 opacity-50" />
-				<input
-					type="text"
-					class="input pl-9 rounded-sm bg-surface-100-900 text-sm"
-					placeholder="Search title, slug, summary, book, or arc..."
-					bind:value={searchQuery}
-				/>
-			</div>
-
-			<!-- Sort By Dropdown -->
-			<div class="flex items-center gap-2">
-				<ArrowUpDownIcon class="size-4 shrink-0 opacity-50" />
-				<select class="select rounded-sm bg-surface-100-900 text-sm" bind:value={sortBy}>
-					<option value="order-asc">Order (Low to High)</option>
-					<option value="order-desc">Order (High to Low)</option>
-					<option value="date-desc">Published (Newest First)</option>
-					<option value="date-asc">Published (Oldest First)</option>
-					<option value="title-asc">Title (A - Z)</option>
-					<option value="title-desc">Title (Z - A)</option>
-				</select>
-			</div>
+			<SearchField
+				bind:value={searchQuery}
+				placeholder="Search title, slug, summary, book, or arc..."
+			/>
+			<SortField
+				bind:value={sortBy}
+				options={sortOptions}
+			/>
 		</div>
 
-		<!-- Bottom Row: Multi-Filter Selects -->
+		<!-- Multi-Filter Selects -->
 		<div class="flex flex-wrap items-center gap-3 pt-1">
 			<div class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider opacity-60">
 				<FilterIcon class="size-3.5" />
 				<span>Filter:</span>
 			</div>
 
-			<!-- Story Type Filter -->
-			<select class="select rounded-sm bg-surface-100-900 py-1 text-xs" bind:value={selectedStoryType}>
-				<option value="">All Story Types</option>
-				{#each availableStoryTypes as st (st.value)}
-					<option value={st.value}>{st.label}</option>
-				{/each}
-			</select>
+			<FilterField
+				bind:value={selectedStoryType}
+				options={availableStoryTypes}
+				placeholder="All Story Types"
+			/>
 
-			<!-- Book Filter -->
-			<select class="select rounded-sm bg-surface-100-900 py-1 text-xs" bind:value={selectedBookId}>
-				<option value="">All Books</option>
-				{#each books as b (b.id)}
-					<option value={b.id}>{b.title}</option>
-				{/each}
-			</select>
+			<FilterField
+				bind:value={selectedBookId}
+				options={bookFilterOptions}
+				placeholder="All Books"
+			/>
 
-			<!-- Arc Filter -->
-			<select class="select rounded-sm bg-surface-100-900 py-1 text-xs" bind:value={selectedArcId}>
-				<option value="">All Arcs</option>
-				{#each availableArcs as a (a.id)}
-					<option value={a.id}>{a.title}</option>
-				{/each}
-			</select>
+			<FilterField
+				bind:value={selectedArcId}
+				options={arcFilterOptions}
+				placeholder="All Arcs"
+			/>
 
-			<!-- Status Filter -->
-			<select class="select rounded-sm bg-surface-100-900 py-1 text-xs" bind:value={selectedStatus}>
-				<option value="">All Statuses</option>
-				<option value="DRAFT">Draft</option>
-				<option value="PUBLISHED">Published</option>
-				<option value="ARCHIVED">Archived</option>
-			</select>
+			<FilterField
+				bind:value={selectedStatus}
+				options={statusOptions}
+				placeholder="All Statuses"
+			/>
 
-			<!-- Clear Filters Button -->
 			{#if hasActiveFilters}
 				<Button
-					class="btn-sm preset-tonal-error rounded-sm flex items-center gap-1 text-xs"
+					class="btn-sm flex items-center gap-1 text-xs preset-tonal-error !rounded-sm"
 					onclick={resetFilters}
 					title="Reset Filters"
 				>
@@ -207,12 +191,12 @@
 						</td>
 						<td class="p-3">
 							<div class="flex flex-col items-start gap-1">
-								<Badge class="preset-tonal-secondary rounded-sm">{getBookTitle(chapter.bookId)}</Badge>
-								{#if arcTitle}<Badge class="preset-tonal-tertiary rounded-sm text-xs">{arcTitle}</Badge>{/if}
+								<Badge class="preset-tonal-secondary !rounded-sm">{getBookTitle(chapter.bookId)}</Badge>
+								{#if arcTitle}<Badge class="preset-tonal-tertiary !rounded-sm text-xs">{arcTitle}</Badge>{/if}
 							</div>
 						</td>
 						<td class="p-3">
-							<Badge class="rounded-sm {chapter.status === 'PUBLISHED' ? 'preset-tonal-success' : 'preset-tonal-warning'}">
+							<Badge class="!rounded-sm {chapter.status === 'PUBLISHED' ? 'preset-tonal-success' : 'preset-tonal-warning'}">
 								{chapter.status}
 							</Badge>
 						</td>
@@ -226,11 +210,11 @@
 									target="_blank"
 									title="View Chapter"
 								>
-									<Button class="btn-icon btn-icon-sm preset-filled-surface-500 hover:preset-filled-secondary-500 rounded-sm" type="button">
+									<Button class="btn-icon btn-icon-sm preset-filled-surface-500 hover:preset-filled-secondary-500 !rounded-sm" type="button">
 										<EyeIcon class="size-4" />
 									</Button>
 								</a>
-								<Button class="btn-icon btn-icon-sm preset-filled-primary-500 rounded-sm" onclick={() => onEdit(chapter)} title="Edit">
+								<Button class="btn-icon btn-icon-sm preset-filled-primary-500 !rounded-sm" onclick={() => onEdit(chapter)} title="Edit">
 									<EditIcon class="size-4" />
 								</Button>
 								<DeleteDialog action="?/deleteChapter" id={chapter.id} />
