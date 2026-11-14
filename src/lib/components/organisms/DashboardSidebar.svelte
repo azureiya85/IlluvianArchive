@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { Navigation } from '@skeletonlabs/skeleton-svelte';
+	import { resolve } from '$app/paths';
+	import Navigation, { type NavGroup } from '#lib/components/atoms/Navigation.svelte';
 	import BookIcon from '@lucide/svelte/icons/book';
 	import FileTextIcon from '@lucide/svelte/icons/file-text';
 	import GlobeIcon from '@lucide/svelte/icons/globe';
@@ -8,52 +9,52 @@
 	import LogOutIcon from '@lucide/svelte/icons/log-out';
 	import HomeIcon from '@lucide/svelte/icons/house';
 
-	let { currentPath = '/admin/dashboard' }: { currentPath?: string } = $props();
+	let { currentPath = resolve('/admin/dashboard') }: { currentPath?: string } = $props();
+
+	const navGroups: NavGroup[] = [
+		{
+			id: 'management',
+			label: 'Management',
+			items: [
+				{ id: 'books', label: 'Books', href: resolve('/admin/dashboard'), icon: BookIcon },
+				{ id: 'chapters', label: 'Chapters', href: resolve('/admin/dashboard/chapters'), icon: FileTextIcon },
+				{ id: 'worlds', label: 'Worlds', href: resolve('/admin/dashboard/worlds'), icon: GlobeIcon },
+				{ id: 'characters', label: 'Characters', href: resolve('/admin/dashboard/characters'), icon: UsersIcon },
+				{ id: 'site', label: 'Site Data', href: resolve('/admin/dashboard/site'), icon: SettingsIcon }
+			]
+		}
+	];
 </script>
 
-<Navigation layout="sidebar" class="bg-surface-100-900 border-surface-200-800 grid h-screen w-64 grid-rows-[auto_1fr_auto] gap-4 border-r">
-	<Navigation.Header class="p-4">
-		<h2 class="h3 font-bold">Admin Panel</h2>
-	</Navigation.Header>
+<Navigation
+	groups={navGroups}
+	{currentPath}
+>
+	{#snippet footerSnippet({ isCollapsed })}
+		<a
+			href={resolve('/')}
+			title="Back to Home"
+			aria-label="Back to Home"
+			class="btn flex w-full items-center gap-2 p-2 justify-start hover:preset-tonal rounded-sm"
+		>
+			<HomeIcon class="size-4 shrink-0" />
+			{#if !isCollapsed}
+				<span class="truncate">Back to Home</span>
+			{/if}
+		</a>
 
-	<Navigation.Content>
-		<Navigation.Group>
-			<Navigation.Label class="pl-4 text-xs font-bold uppercase opacity-50">Management</Navigation.Label>
-			<Navigation.Menu class="px-2">
-				<Navigation.TriggerAnchor href="/admin/dashboard" class={currentPath === '/admin/dashboard' ? 'preset-tonal' : ''}>
-					<BookIcon class="size-4" />
-					<Navigation.TriggerText>Books</Navigation.TriggerText>
-				</Navigation.TriggerAnchor>
-				<Navigation.TriggerAnchor href="/admin/dashboard/chapters" class={currentPath === '/admin/dashboard/chapters' ? 'preset-tonal' : ''}>
-					<FileTextIcon class="size-4" />
-					<Navigation.TriggerText>Chapters</Navigation.TriggerText>
-				</Navigation.TriggerAnchor>
-				<Navigation.TriggerAnchor href="/admin/dashboard/worlds" class={currentPath === '/admin/dashboard/worlds' ? 'preset-tonal' : ''}>
-					<GlobeIcon class="size-4" />
-					<Navigation.TriggerText>Worlds</Navigation.TriggerText>
-				</Navigation.TriggerAnchor>
-				<Navigation.TriggerAnchor href="/admin/dashboard/characters" class={currentPath === '/admin/dashboard/characters' ? 'preset-tonal' : ''}>
-					<UsersIcon class="size-4" />
-					<Navigation.TriggerText>Characters</Navigation.TriggerText>
-				</Navigation.TriggerAnchor>
-				<Navigation.TriggerAnchor href="/admin/dashboard/site" class={currentPath === '/admin/dashboard/site' ? 'preset-tonal' : ''}>
-					<SettingsIcon class="size-4" />
-					<Navigation.TriggerText>Site Data</Navigation.TriggerText>
-				</Navigation.TriggerAnchor>
-			</Navigation.Menu>
-		</Navigation.Group>
-	</Navigation.Content>
-
-	<Navigation.Footer class="space-y-2 p-2">
-		<Navigation.TriggerAnchor href="/" title="Back to Home" aria-label="Back to Home">
-			<HomeIcon class="size-4" />
-			<Navigation.TriggerText>Back to Home</Navigation.TriggerText>
-		</Navigation.TriggerAnchor>
 		<form method="POST" action="/admin/logout" class="w-full">
-			<button type="submit" class="btn w-full justify-start hover:preset-tonal-error">
-				<LogOutIcon class="size-4" />
-				<span>Sign Out</span>
+			<button
+				type="submit"
+				title="Sign Out"
+				aria-label="Sign Out"
+				class="btn flex w-full items-center gap-2 p-2 justify-start hover:preset-tonal-error rounded-sm"
+			>
+				<LogOutIcon class="size-4 shrink-0" />
+				{#if !isCollapsed}
+					<span class="truncate">Sign Out</span>
+				{/if}
 			</button>
 		</form>
-	</Navigation.Footer>
+	{/snippet}
 </Navigation>

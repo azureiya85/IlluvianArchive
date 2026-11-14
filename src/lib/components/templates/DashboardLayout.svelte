@@ -10,10 +10,10 @@
 	let { children, currentPath }: Props = $props();
 </script>
 
-<div class="grid h-screen w-full grid-cols-[auto_1fr] items-stretch overflow-hidden">
+<div class="flex flex-col min-h-screen w-full md:grid md:h-screen md:grid-cols-[auto_1fr] md:items-stretch md:overflow-hidden">
 	<DashboardSidebar {currentPath} />
 
-	<main class="overflow-y-auto p-4 md:p-8">
+	<main class="flex-1 overflow-y-auto p-4 pb-20 md:p-8 md:pb-8">
 		<div class="mx-auto max-w-7xl">
 			{@render children()}
 		</div>
